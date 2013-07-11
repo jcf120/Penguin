@@ -27,6 +27,13 @@ namespace Penguin
 		//  \   /
 		//    3
 		private Cell[] corners_ = {null, null, null, null, null, null};
+		// Accessors
+		public Cell topLeftCell      {get{return corners_[5];}}
+		public Cell topMiddleCell    {get{return corners_[0];}}
+		public Cell topRightCell     {get{return corners_[1];}}
+		public Cell bottomLeftCell   {get{return corners_[4];}}
+		public Cell bottomMiddleCell {get{return corners_[3];}}
+		public Cell bottomRightCell  {get{return corners_[2];}}
 		
 		
 		// Needed to find relative position to player
