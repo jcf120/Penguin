@@ -45,6 +45,7 @@
     <Compile Include="Cells\Cell.cs" />
     <Compile Include="Cells\CellMap.cs" />
     <Compile Include="Cells\CellType.cs" />
+    <Compile Include="Cells\CellIndex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

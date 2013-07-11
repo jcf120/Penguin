@@ -212,6 +212,23 @@ namespace Penguin
 		}
 		
 		
+		private void spawnSidesFromCorner(int cornerIndex)
+		{
+			Cell oldCorner = corners_[cornerIndex];
+			
+			// Build outwards
+			Cell newCorner = new Cell(CellType.Normal);
+			linkCells(oldCorner, newCorner, cornerIndex);
+		}
+		
+		
+		// direction corresponds to corner indices
+		public void scroll(int direction)
+		{
+			// Spawn two new sides around corner
+		}
+		
+		
 	}
 	
 	

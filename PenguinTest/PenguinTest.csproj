@@ -43,6 +43,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="CellMapTest.cs" />
+    <Compile Include="CellIndexTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Penguin\Penguin.csproj">
