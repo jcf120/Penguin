@@ -18,6 +18,7 @@ namespace Penguin
 		public CellIndex(int i)
 		{
 			index = i;
+			while (index > 5) index -= 6;
 		}
 		
 		
