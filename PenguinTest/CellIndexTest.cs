@@ -8,10 +8,10 @@ namespace PenguinTest
 	public class CellIndexTest
 	{
 		[Test()]
-		public void ArithmeticOperators ()
+		public void TypeCasting ()
 		{
 			CellIndex c = new CellIndex(0);
-			Assert.IsInstanceOfType(typeof(CellIndex), 1+c, "CellIndex + int should return a CellIndex"); 
+			Assert.IsInstanceOfType(typeof(CellIndex), 1+c, "CellIndex + int should return a CellIndex");
 		}
 	}
 }

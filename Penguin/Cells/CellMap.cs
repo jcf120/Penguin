@@ -28,12 +28,12 @@ namespace Penguin
 		//    3
 		private Cell[] corners_ = {null, null, null, null, null, null};
 		// Accessors
-		public Cell topLeftCell      {get{return corners_[5];}}
 		public Cell topMiddleCell    {get{return corners_[0];}}
 		public Cell topRightCell     {get{return corners_[1];}}
-		public Cell bottomLeftCell   {get{return corners_[4];}}
-		public Cell bottomMiddleCell {get{return corners_[3];}}
 		public Cell bottomRightCell  {get{return corners_[2];}}
+		public Cell bottomMiddleCell {get{return corners_[3];}}
+		public Cell bottomLeftCell   {get{return corners_[4];}}
+		public Cell topLeftCell      {get{return corners_[5];}}
 		
 		
 		// Needed to find relative position to player
@@ -41,8 +41,8 @@ namespace Penguin
 			get{
 				if (corners_[0].platform==null)
 					Debug.LogError("CellMap centre undefined before instantiation");
-				Vector2 vec = new Vector2(corners_[0].platform.transform.position.x,
-										  corners_[0].platform.transform.position.z);
+				Vector2 vec = new Vector2(corners_[CellIndex.topMiddle].platform.transform.position.x,
+										  corners_[CellIndex.topMiddle].platform.transform.position.z);
 				vec -= (radius_-1) * cellSize_ * Vector2.up;
 				return vec;
 			}
@@ -62,10 +62,10 @@ namespace Penguin
 		
 		
 		// Mutually joins c2 at specified index of c1
-		private void linkCells(Cell c1, Cell c2, int c1index)
+		private void linkCells(Cell c1, Cell c2, CellIndex c1index)
 		{
 			// Calculate corresponding side of c2
-			int c2index = c1index - 3;
+			CellIndex c2index = c1index - 3;
 			if (c2index<0) c2index += 6;
 			
 			// Check links aren't already occupied
@@ -83,14 +83,14 @@ namespace Penguin
 			initialCellsAreBuilt_ = true;
 			
 			// Start building from top-left corner
-			corners_[5] = new Cell(type);
+			corners_[CellIndex.topLeft] = new Cell(type);
 			
 			// Build row diagonally upwards, linking backwards
-			Cell prev = corners_[5];
+			Cell prev = corners_[CellIndex.topLeft];
 			for (int i=1; i<radius_; i++) {
 				Cell c = new Cell(type);
 				// Link bottom left corner
-				linkCells(c, prev, 4);
+				linkCells(c, prev, CellIndex.bottomLeft);
 				prev = c;
 			}
 			
@@ -98,25 +98,25 @@ namespace Penguin
 			corners_[0] = prev;
 			
 			// Build rows underneath until we reach the top-right corner
-			Cell firstOfPreviousRow = corners_[5];
+			Cell firstOfPreviousRow = corners_[CellIndex.topLeft];
 			for (int i=1; i<radius_; i++) {
 				// First cell of row
 				prev = new Cell(type);
 				// Link to cell above
 				Cell abovePrev = firstOfPreviousRow;
-				linkCells(prev, abovePrev, 0);
+				linkCells(prev, abovePrev, CellIndex.topMiddle);
 				
 				// Remaining cells in row
 				for (int j=1; j<radius_+i; j++) {
 					Cell c = new Cell(type);
 					// Link bottom left
-					linkCells(c, prev, 4);
+					linkCells(c, prev, CellIndex.bottomLeft);
 					// Link top left
-					linkCells(c, abovePrev, 5);
+					linkCells(c, abovePrev, CellIndex.topLeft);
 					// Link above, unless last cell in row
 					if (j<radius_+i-1) {
 						abovePrev = abovePrev[1];
-						linkCells(c, abovePrev, 0);
+						linkCells(c, abovePrev, CellIndex.topMiddle);
 					}
 					prev = c;
 				}
@@ -126,8 +126,8 @@ namespace Penguin
 			}
 		
 			// Reference entry points from previous row
-			corners_[4] = firstOfPreviousRow;
-			corners_[1] = prev;
+			corners_[CellIndex.bottomLeft] = firstOfPreviousRow;
+			corners_[CellIndex.topRight] = prev;
 			
 			// Build rows underneath until we reach the bottom-right corner
 			for (int i=radius_-2; i>=0; i--) {
@@ -135,21 +135,21 @@ namespace Penguin
 				// First cell of row
 				prev = new Cell(type);
 				// Link top left corner
-				linkCells(prev, firstOfPreviousRow, 5);
+				linkCells(prev, firstOfPreviousRow, CellIndex.topLeft);
 				// Link above
 				Cell abovePrev = firstOfPreviousRow[1];
-				linkCells(prev, abovePrev, 0);
+				linkCells(prev, abovePrev, CellIndex.topMiddle);
 				
 				// Build remaining cells in row
 				for (int j=1; j<radius_+i; j++) {
 					Cell c = new Cell(type);
 					// Link bottom left
-					linkCells(c, prev, 4);
+					linkCells(c, prev, CellIndex.bottomLeft);
 					// Link top left
-					linkCells(c, abovePrev, 5);
+					linkCells(c, abovePrev, CellIndex.topLeft);
 					// Link above
 					abovePrev = abovePrev[1];
-					linkCells(c, abovePrev, 0);
+					linkCells(c, abovePrev, CellIndex.topMiddle);
 					prev = c;
 				}
 				
@@ -158,8 +158,8 @@ namespace Penguin
 			}
 			
 			// Reference entry points from final row
-			corners_[3] = firstOfPreviousRow;
-			corners_[2] = prev;
+			corners_[CellIndex.bottomMiddle] = firstOfPreviousRow;
+			corners_[CellIndex.bottomRight] = prev;
 		}
 		
 		
@@ -212,7 +212,7 @@ namespace Penguin
 		}
 		
 		
-		private void spawnSidesFromCorner(int cornerIndex)
+		private void spawnSidesFromCorner(CellIndex cornerIndex)
 		{
 			Cell oldCorner = corners_[cornerIndex];
 			
