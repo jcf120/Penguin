@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Penguin", "Penguin\Penguin.csproj", "{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PenguinTest", "PenguinTest\PenguinTest.csproj", "{0218BCD6-4CF1-4609-8D40-23A9B1124D5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0218BCD6-4CF1-4609-8D40-23A9B1124D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0218BCD6-4CF1-4609-8D40-23A9B1124D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0218BCD6-4CF1-4609-8D40-23A9B1124D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0218BCD6-4CF1-4609-8D40-23A9B1124D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Penguin\Penguin.csproj
+	EndGlobalSection
+EndGlobal
