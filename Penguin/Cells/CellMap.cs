@@ -190,6 +190,34 @@ namespace Penguin
 		}
 		
 		
+		// Destroys contents but doesn't remove from map
+		private void destroyCell(Cell cell)
+		{
+			if (cell.platform!=null) {
+				GameObject.Destroy(cell.platform);
+				cell.type = CellType.Empty;
+			} else {
+				Debug.LogError("Cell's platform of type "+cell.type+" already null");
+			}
+		}
+		
+		
+		// Destroy and delete cell from map
+		private void deleteCell(Cell cell)
+		{
+			// Unlink from neighbours
+			for (int i=0; i<6; i++)
+				if (cell[i]!=null) {
+				CellIndex index = new CellIndex(i);
+				unlinkCells(cell, cell[i], index);
+			}
+				
+			// Destroy if of non-empty type
+			if (cell.type != CellType.Empty && cell.type != CellType.Undefined)
+				destroyCell(cell);
+		}
+		
+		
 		private bool initialCellsAreInstantiated_;
 		public void instantiateInitialCells(Vector2 centre)
 		{
