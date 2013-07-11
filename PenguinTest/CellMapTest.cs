@@ -12,7 +12,7 @@ namespace PenguinTest
 		[SetUp()]
 		public void Init()
 		{
-			cellMap = new CellMap(3);
+			cellMap = new CellMap(3, 1.0f, null);
 		}
 		
 		[Test()]

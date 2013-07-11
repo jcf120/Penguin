@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Penguin
@@ -10,6 +10,12 @@ namespace Penguin
 		// equal to the length of it's sides
 		private int radius_;
 		public int radius {get{return radius_;}}
+		
+		// Used to calculate cells relative positions
+		private float cellSize_;
+		
+		// Referenced when instaniating cells
+		private Dictionary<CellType, GameObject> platformDict_;
 		
 		
 		// Entry points into map
@@ -28,10 +34,14 @@ namespace Penguin
 		public Cell bottomRightCell  {get{return brCell_;}}
 		
 		
-		public CellMap (int radius)
+		public CellMap (int radius,
+						float cellSize,
+						Dictionary<CellType, GameObject> platfromDict)
 		{
 			if (radius<1) Debug.LogError("CellMap cannot have radius below 1");
-			radius_ = radius;
+			radius_       = radius;
+			cellSize_     = cellSize;
+			platformDict_ = platfromDict;
 			buildInitialCells(CellType.Normal);
 		}
 		
@@ -55,6 +65,7 @@ namespace Penguin
 		private void buildInitialCells(CellType type)
 		{
 			if (initialCellsAreBuilt_) Debug.LogError("Cells have been built once already");
+			initialCellsAreBuilt_ = true;
 			
 			// Start building from top-left corner
 			tlCell_ = new Cell(type);
@@ -137,10 +148,55 @@ namespace Penguin
 		}
 		
 		
-		private void instantiateInitialCells()
+		private void instantiateCell(Cell cell, Vector2 position)
 		{
+			if (cell.type == CellType.Empty) return;
+			if (!platformDict_.ContainsKey(cell.type)) {
+				Debug.LogError("CellMap's platformDict contains no gameObject for key: "+cell.type);
+				return;
+			}
 			
+			Vector3 pos = new Vector3(position.x, 0.0f, position.y);
+			GameObject.Instantiate(platformDict_[cell.type], pos, Quaternion.identity);
 		}
+		
+		
+		private bool initialCellsAreInstantiated_;
+		public void instantiateInitialCells(Vector2 centre)
+		{
+			if (initialCellsAreInstantiated_) Debug.LogError("Cells have been instantiated once already");
+			initialCellsAreInstantiated_ = true;
+			
+			// Cell traversal vectors
+			Vector2 rightUp = new Vector2(cellSize_*Mathf.Sin(Mathf.PI/3.0f),
+												cellSize_*Mathf.Cos(Mathf.PI/3.0f));
+			Vector2 down = -cellSize_ * Vector2.up;
+			
+			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
+			Cell firstCellOfRow = tlCell_;
+			while (firstCellOfRow!=null) {
+				
+				Cell    c = firstCellOfRow;
+				Vector2 v = firstPosOfRow;
+				while (c!=null) {
+					instantiateCell(c, v);
+					// Traverse up and right
+					c = c[1];
+					v += rightUp;
+				}
+				
+				// Traverse left side then bottom-left side
+				if (firstCellOfRow[3]!=null) {
+					firstCellOfRow = firstCellOfRow[3];
+					firstPosOfRow += down;
+				} else {
+					firstCellOfRow = firstCellOfRow[2];
+					firstPosOfRow += down + rightUp;
+				}
+			}
+		}
+		
+		
 	}
 	
 	

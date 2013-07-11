@@ -1,19 +1,34 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Penguin\Cells\CellMap.cs">
+    <Files>
+      <File FileName="Penguin\Cells\CellMap.cs" Line="191" Column="4" />
+      <File FileName="PenguinTest\CellMapTest.cs" Line="25" Column="4" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
+          <Option id="ShowVersionControlOverlays" value="True" />
+          <Option id="ShowAllFiles" value="False" />
           <Node name="Penguin" expanded="True">
-            <Node name="Cells" expanded="True" />
+            <Node name="Cells" expanded="True">
+              <Node name="CellMap.cs" selected="True" />
+            </Node>
           </Node>
           <Node name="PenguinTest" expanded="True">
-            <Node name="References" selected="True" />
+            <Node name="References" expanded="True" />
           </Node>
         </State>
       </Pad>
       <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="Penguin" expanded="True">
+            <Node name="Penguin" expanded="True" />
+          </Node>
+          <Node name="PenguinTest" expanded="True">
+            <Node name="References" expanded="True" selected="True" />
+          </Node>
+        </State>
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
         <State />
