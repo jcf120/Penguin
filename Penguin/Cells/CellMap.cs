@@ -37,10 +37,10 @@ namespace Penguin
 		// Needed to find relative position to player
 		public Vector2 centre {
 			get{
-				if (tlCell_.platform==null)
+				if (tmCell_.platform==null)
 					Debug.LogError("CellMap centre undefined before instantiation");
-				Vector2 vec = new Vector2(tlCell_.platform.transform.position.x,
-										  tlCell_.platform.transform.position.z);
+				Vector2 vec = new Vector2(tmCell_.platform.transform.position.x,
+										  tmCell_.platform.transform.position.z);
 				vec -= (radius_-1) * cellSize_ * Vector2.up;
 				return vec;
 			}
