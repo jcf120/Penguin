@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Penguin
 {
@@ -20,6 +21,22 @@ namespace Penguin
 			index = i;
 			while (index > 5) index -= 6;
 			while (index < 0) index += 6;
+		}
+		
+		
+		public static CellIndex fromAngle(float degrees)
+		{
+			CellIndex result = new CellIndex(0);
+			// Allow values near 360 to round down to 0
+			degrees += 30.0f;
+			// Scale and quantise to index
+			result.index = Mathf.FloorToInt(degrees / 60.0f);
+			if (result.index > 5) result.index -= 6;
+			
+			while (result.index > 5) result.index -= 6;
+			while (result.index < 0) result.index += 6;
+			
+			return result;
 		}
 		
 		
