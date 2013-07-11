@@ -19,6 +19,7 @@ namespace Penguin
 		{
 			index = i;
 			while (index > 5) index -= 6;
+			while (index < 0) index += 6;
 		}
 		
 		

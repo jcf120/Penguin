@@ -42,6 +42,23 @@
       <TotalIgnored>0</TotalIgnored>
       <Time />
     </UnitTestResult>
+    <UnitTestResult>
+      <TestDate>2013-07-11T22:29:01</TestDate>
+      <Status>Success</Status>
+      <TotalFailures>0</TotalFailures>
+      <TotalSuccess>3</TotalSuccess>
+      <TotalIgnored>0</TotalIgnored>
+      <Time />
+    </UnitTestResult>
+    <UnitTestResult>
+      <TestDate>2013-07-11T22:29:17</TestDate>
+      <Status>Success Failure</Status>
+      <TotalFailures>1</TotalFailures>
+      <TotalSuccess>2</TotalSuccess>
+      <TotalIgnored>0</TotalIgnored>
+      <Time />
+      <Message>Child test failed</Message>
+    </UnitTestResult>
   </Results>
   <Tests>
     <TestRecord Name="PenguinTest">
@@ -87,6 +104,23 @@
           <TotalIgnored>0</TotalIgnored>
           <Time />
         </UnitTestResult>
+        <UnitTestResult>
+          <TestDate>2013-07-11T22:29:01</TestDate>
+          <Status>Success</Status>
+          <TotalFailures>0</TotalFailures>
+          <TotalSuccess>3</TotalSuccess>
+          <TotalIgnored>0</TotalIgnored>
+          <Time />
+        </UnitTestResult>
+        <UnitTestResult>
+          <TestDate>2013-07-11T22:29:17</TestDate>
+          <Status>Success Failure</Status>
+          <TotalFailures>1</TotalFailures>
+          <TotalSuccess>2</TotalSuccess>
+          <TotalIgnored>0</TotalIgnored>
+          <Time />
+          <Message>Child test failed</Message>
+        </UnitTestResult>
       </Results>
       <Tests>
         <TestRecord Name="CellMapTest">
@@ -126,6 +160,22 @@
             </UnitTestResult>
             <UnitTestResult>
               <TestDate>2013-07-11T20:35:31</TestDate>
+              <Status>Success</Status>
+              <TotalFailures>0</TotalFailures>
+              <TotalSuccess>1</TotalSuccess>
+              <TotalIgnored>0</TotalIgnored>
+              <Time />
+            </UnitTestResult>
+            <UnitTestResult>
+              <TestDate>2013-07-11T22:29:01</TestDate>
+              <Status>Success</Status>
+              <TotalFailures>0</TotalFailures>
+              <TotalSuccess>1</TotalSuccess>
+              <TotalIgnored>0</TotalIgnored>
+              <Time />
+            </UnitTestResult>
+            <UnitTestResult>
+              <TestDate>2013-07-11T22:29:17</TestDate>
               <Status>Success</Status>
               <TotalFailures>0</TotalFailures>
               <TotalSuccess>1</TotalSuccess>
@@ -201,6 +251,32 @@ Execution time: 0.02ms</Message>
                   <ConsoleOutput />
                   <ConsoleError />
                 </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:01</TestDate>
+                  <Status>Success</Status>
+                  <TotalFailures>0</TotalFailures>
+                  <TotalSuccess>1</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.03ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:17</TestDate>
+                  <Status>Success</Status>
+                  <TotalFailures>0</TotalFailures>
+                  <TotalSuccess>1</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.02ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
               </Results>
               <Tests />
             </TestRecord>
@@ -216,6 +292,23 @@ Execution time: 0.02ms</Message>
               <TotalIgnored>0</TotalIgnored>
               <Time />
             </UnitTestResult>
+            <UnitTestResult>
+              <TestDate>2013-07-11T22:29:01</TestDate>
+              <Status>Success</Status>
+              <TotalFailures>0</TotalFailures>
+              <TotalSuccess>2</TotalSuccess>
+              <TotalIgnored>0</TotalIgnored>
+              <Time />
+            </UnitTestResult>
+            <UnitTestResult>
+              <TestDate>2013-07-11T22:29:17</TestDate>
+              <Status>Success Failure</Status>
+              <TotalFailures>1</TotalFailures>
+              <TotalSuccess>1</TotalSuccess>
+              <TotalIgnored>0</TotalIgnored>
+              <Time />
+              <Message>Child test failed</Message>
+            </UnitTestResult>
           </Results>
           <Tests>
             <TestRecord Name="ArithmeticOperators">
@@ -230,6 +323,71 @@ Execution time: 0.02ms</Message>
                   <Message>Test successful
 
 Execution time: 0.01ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="Arithmetic">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:01</TestDate>
+                  <Status>Success</Status>
+                  <TotalFailures>0</TotalFailures>
+                  <TotalSuccess>1</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.02ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:17</TestDate>
+                  <Status>Failure</Status>
+                  <TotalFailures>1</TotalFailures>
+                  <TotalSuccess>0</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>  CellIndex(0)-2 should equal 4, but is instead Penguin.CellIndex
+  Expected: 4
+  But was:  5
+</Message>
+                  <StackTrace>   at NUnit.Framework.Assert.That(Object actual, Constraint constraint, String message, Object[] args)
+   at NUnit.Framework.Assert.AreEqual(Int32 expected, Int32 actual, String message, Object[] args)
+   at NUnit.Framework.Assert.AreEqual(Int32 expected, Int32 actual, String message)
+   at PenguinTest.CellIndexTest.Arithmetic() in c:\Users\Joss\Documents\Unity\Penguin\GameCode\Penguin\PenguinTest\CellIndexTest.cs:line 23</StackTrace>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+              </Results>
+            </TestRecord>
+            <TestRecord Name="TypeCasting">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:01</TestDate>
+                  <Status>Success</Status>
+                  <TotalFailures>0</TotalFailures>
+                  <TotalSuccess>1</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.00ms</Message>
+                  <ConsoleOutput />
+                  <ConsoleError />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-07-11T22:29:17</TestDate>
+                  <Status>Success</Status>
+                  <TotalFailures>0</TotalFailures>
+                  <TotalSuccess>1</TotalSuccess>
+                  <TotalIgnored>0</TotalIgnored>
+                  <Time />
+                  <Message>Test successful
+
+Execution time: 0.00ms</Message>
                   <ConsoleOutput />
                   <ConsoleError />
                 </UnitTestResult>

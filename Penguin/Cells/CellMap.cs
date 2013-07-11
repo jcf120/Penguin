@@ -95,7 +95,7 @@ namespace Penguin
 			}
 			
 			// Reference top middle entry point
-			corners_[0] = prev;
+			corners_[CellIndex.topMiddle] = prev;
 			
 			// Build rows underneath until we reach the top-right corner
 			Cell firstOfPreviousRow = corners_[CellIndex.topLeft];
@@ -216,16 +216,76 @@ namespace Penguin
 		{
 			Cell oldCorner = corners_[cornerIndex];
 			
+			// Position relative to inside row
+			// First convert index to angle
+			float rad = Mathf.PI * (float)cornerIndex / 3.0f;
+			Vector2 relPos = new Vector2(cellSize_ * Mathf.Sin(rad),
+										 cellSize_ * Mathf.Cos(rad));
+			
 			// Build outwards
 			Cell newCorner = new Cell(CellType.Normal);
-			linkCells(oldCorner, newCorner, cornerIndex);
+			// Link inwards
+			linkCells(newCorner, oldCorner, cornerIndex-3);
+			// Instantiate
+			Vector2 oldPos = new Vector2(oldCorner.platform.transform.position.x,
+										 oldCorner.platform.transform.position.z);
+			instantiateCell(newCorner, oldPos+relPos);
+			// Refernce new corner
+			corners_[cornerIndex] = newCorner;
+			
+			// Build anti-clockwise
+			Cell prevCell  = newCorner;
+			Cell innerCell = oldCorner[cornerIndex-2];
+			while (innerCell!=null) {
+				Cell c = new Cell(CellType.Normal);
+				// Link backwards
+				linkCells(c, prevCell, cornerIndex+1);
+				// Link inwards
+				linkCells(c, innerCell, cornerIndex+3);
+				// Link to cell sandwiched between previous two
+				linkCells(c, innerCell[cornerIndex+1], cornerIndex+2);
+				
+				// Instantiate cell relative to inner cell
+				Vector2 innerPos = new Vector2(innerCell.platform.transform.position.x,
+											   innerCell.platform.transform.position.z);
+				instantiateCell(c, innerPos+relPos);
+				
+				prevCell = c;
+				innerCell = innerCell[cornerIndex-2];
+			}
+			// Reference new anti-clockwise corner
+			corners_[cornerIndex-1] = prevCell;
+			
+			// Build clockwise
+			prevCell  = newCorner;
+			innerCell = oldCorner[cornerIndex+2];
+			while (innerCell!=null) {
+				Cell c = new Cell(CellType.Normal);
+				// Link backwards
+				linkCells(c, prevCell, cornerIndex-1);
+				// Link inwards
+				linkCells(c, innerCell, cornerIndex-3);
+				// Link to cell sandwiched between previous two
+				linkCells(c, innerCell[cornerIndex-1], cornerIndex-2);
+				
+				// Instantiate cell relative to inner cell
+				Vector2 innerPos = new Vector2(innerCell.platform.transform.position.x,
+											   innerCell.platform.transform.position.z);
+				instantiateCell(c, innerPos+relPos);
+				
+				prevCell = c;
+				innerCell = innerCell[cornerIndex+2];
+			}
+			// Reference new clockwise corner
+			corners_[cornerIndex+1] = prevCell;
 		}
 		
 		
 		// direction corresponds to corner indices
-		public void scroll(int direction)
+		public void scroll(CellIndex direction)
 		{
 			// Spawn two new sides around corner
+			spawnSidesFromCorner(direction);
 		}
 		
 		
