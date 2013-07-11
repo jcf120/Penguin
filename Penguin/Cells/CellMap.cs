@@ -76,7 +76,7 @@ namespace Penguin
 		
 		
 		// Disconnect two cells that are referencing each other
-		private void linkCells(Cell c1, Cell c2, CellIndex c1index)
+		private void unlinkCells(Cell c1, Cell c2, CellIndex c1index)
 		{
 			// Calculate corresponding side of c2
 			CellIndex c2index = c1index - 3;
