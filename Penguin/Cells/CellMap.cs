@@ -323,11 +323,44 @@ namespace Penguin
 		}
 		
 		
+		private void deleteSidesFromCorner(CellIndex cornerIndex)
+		{
+			// Record old corner
+			Cell oldCorner = corners_[cornerIndex];
+			
+			// Update this corner and the two either side
+			corners_[cornerIndex  ] = corners_[cornerIndex  ][cornerIndex-3];
+			corners_[cornerIndex-1] = corners_[cornerIndex-1][cornerIndex-3];
+			corners_[cornerIndex+1] = corners_[cornerIndex+1][cornerIndex-3];
+			
+			// delete anti-clockwise
+			Cell next = oldCorner[cornerIndex-2];
+			while (next!=null) {
+				Cell c = next;
+				next = next[cornerIndex-2];
+				deleteCell(c);
+			}
+			
+			// delete clockwise
+			next = oldCorner[cornerIndex+2];
+			while (next!=null) {
+				Cell c = next;
+				next = next[cornerIndex+2];
+				deleteCell(c);
+			}
+			
+			// Delete old corner
+			deleteCell(oldCorner);
+		}
+		
+		
 		// direction corresponds to corner indices
 		public void scroll(CellIndex direction)
 		{
 			// Spawn two new sides around corner
 			spawnSidesFromCorner(direction);
+			// Delete opposite sides
+			deleteSidesFromCorner(direction-3);
 		}
 		
 		
