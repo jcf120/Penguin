@@ -66,7 +66,6 @@ namespace Penguin
 		{
 			// Calculate corresponding side of c2
 			CellIndex c2index = c1index - 3;
-			if (c2index<0) c2index += 6;
 			
 			// Check links aren't already occupied
 			if (c1[c1index]!=null) Debug.LogError("Can't assign to already occupied link " + c1index + " in c1");
@@ -74,6 +73,21 @@ namespace Penguin
 			c1[c1index] = c2;
 			c2[c2index] = c1;
 		}
+		
+		
+		// Disconnect two cells that are referencing each other
+		private void linkCells(Cell c1, Cell c2, CellIndex c1index)
+		{
+			// Calculate corresponding side of c2
+			CellIndex c2index = c1index - 3;
+			
+			// Check cells aren't already unlinked
+			if (c1[c1index]!=c2) Debug.LogError("Cells aren't connected at specified index so can't be unlinked");
+			if (c2[c2index]!=c1) Debug.LogError("Cells aren't connected at specified index so can't be unlinked");
+			c1[c1index] = null;
+			c2[c2index] = null;
+		}
+		
 		
 		
 		private bool initialCellsAreBuilt_ = false;
