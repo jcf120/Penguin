@@ -34,6 +34,19 @@ namespace Penguin
 		public Cell bottomRightCell  {get{return brCell_;}}
 		
 		
+		// Needed to find relative position to player
+		public Vector2 centre {
+			get{
+				if (tlCell_.platform==null)
+					Debug.LogError("CellMap centre undefined before instantiation");
+				Vector2 vec = new Vector2(tlCell_.platform.transform.position.x,
+										  tlCell_.platform.transform.position.z);
+				vec -= (radius_-1) * cellSize_ * Vector2.up;
+				return vec;
+			}
+		}
+		
+		
 		public CellMap (int radius,
 						float cellSize,
 						Dictionary<CellType, GameObject> platfromDict)
@@ -157,7 +170,7 @@ namespace Penguin
 			}
 			
 			Vector3 pos = new Vector3(position.x, 0.0f, position.y);
-			GameObject.Instantiate(platformDict_[cell.type], pos, Quaternion.identity);
+			cell.platform = (GameObject)GameObject.Instantiate(platformDict_[cell.type], pos, Quaternion.identity);
 		}
 		
 		
