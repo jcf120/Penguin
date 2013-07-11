@@ -19,28 +19,18 @@ namespace Penguin
 		
 		
 		// Entry points into map
-		private Cell tlCell_ = null; // top left corner
-		private Cell tmCell_ = null; // top middle corner
-		private Cell trCell_ = null; // top right corner
-		private Cell blCell_ = null; // bottom left corner
-		private Cell bmCell_ = null; // bottom middle corner
-		private Cell brCell_ = null; // bottom right corner
-		// Accessors
-		public Cell topLeftCell      {get{return tlCell_;}}
-		public Cell topMiddleCell    {get{return tmCell_;}}
-		public Cell topRightCell     {get{return trCell_;}}
-		public Cell bottomLeftCell   {get{return blCell_;}}
-		public Cell bottomMiddleCell {get{return bmCell_;}}
-		public Cell bottomRightCell  {get{return brCell_;}}
+		//   0
+		//  /
+		private Cell[] corners_ = {null, null, null, null, null, null};
 		
 		
 		// Needed to find relative position to player
 		public Vector2 centre {
 			get{
-				if (tmCell_.platform==null)
+				if (corners_[0].platform==null)
 					Debug.LogError("CellMap centre undefined before instantiation");
-				Vector2 vec = new Vector2(tmCell_.platform.transform.position.x,
-										  tmCell_.platform.transform.position.z);
+				Vector2 vec = new Vector2(corners_[0].platform.transform.position.x,
+										  corners_[0].platform.transform.position.z);
 				vec -= (radius_-1) * cellSize_ * Vector2.up;
 				return vec;
 			}
@@ -81,10 +71,10 @@ namespace Penguin
 			initialCellsAreBuilt_ = true;
 			
 			// Start building from top-left corner
-			tlCell_ = new Cell(type);
+			corners_[5] = new Cell(type);
 			
 			// Build row diagonally upwards, linking backwards
-			Cell prev = tlCell_;
+			Cell prev = corners_[5];
 			for (int i=1; i<radius_; i++) {
 				Cell c = new Cell(type);
 				// Link bottom left corner
@@ -93,10 +83,10 @@ namespace Penguin
 			}
 			
 			// Reference top middle entry point
-			tmCell_ = prev;
+			corners_[0] = prev;
 			
 			// Build rows underneath until we reach the top-right corner
-			Cell firstOfPreviousRow = tlCell_;
+			Cell firstOfPreviousRow = corners_[5];
 			for (int i=1; i<radius_; i++) {
 				// First cell of row
 				prev = new Cell(type);
@@ -124,8 +114,8 @@ namespace Penguin
 			}
 		
 			// Reference entry points from previous row
-			blCell_ = firstOfPreviousRow;
-			trCell_ = prev;
+			corners_[4] = firstOfPreviousRow;
+			corners_[1] = prev;
 			
 			// Build rows underneath until we reach the bottom-right corner
 			for (int i=radius_-2; i>=0; i--) {
@@ -156,8 +146,8 @@ namespace Penguin
 			}
 			
 			// Reference entry points from final row
-			bmCell_ = firstOfPreviousRow;
-			brCell_ = prev;
+			corners_[3] = firstOfPreviousRow;
+			corners_[2] = prev;
 		}
 		
 		
@@ -186,7 +176,7 @@ namespace Penguin
 			Vector2 down = -cellSize_ * Vector2.up;
 			
 			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
-			Cell firstCellOfRow = tlCell_;
+			Cell firstCellOfRow = corners_[5];
 			while (firstCellOfRow!=null) {
 				
 				Cell    c = firstCellOfRow;
