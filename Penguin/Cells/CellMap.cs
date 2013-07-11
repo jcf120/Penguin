@@ -19,8 +19,13 @@ namespace Penguin
 		
 		
 		// Entry points into map
-		//   0
-		//  /
+		//    0
+		//  /   \
+		// 5     1
+		// |     |
+		// 4     2
+		//  \   /
+		//    3
 		private Cell[] corners_ = {null, null, null, null, null, null};
 		
 		
