@@ -230,7 +230,7 @@ namespace Penguin
 			Vector2 down = -cellSize_ * Vector2.up;
 			
 			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
-			Cell firstCellOfRow = corners_[5];
+			Cell firstCellOfRow = corners_[CellIndex.topLeft];
 			while (firstCellOfRow!=null) {
 				
 				Cell    c = firstCellOfRow;
@@ -361,6 +361,54 @@ namespace Penguin
 			spawnSidesFromCorner(direction);
 			// Delete opposite sides
 			deleteSidesFromCorner(direction-3);
+		}
+		
+		
+		private void repositionCell(Cell cell, Vector2 position)
+		{
+			if (cell.platform == null) {
+				Debug.LogError("Attempted to reposition null platform");
+				return;
+			}
+			Vector3 pos = cell.platform.transform.position;
+			pos.x = position.x;
+			pos.z = position.y;
+			cell.platform.transform.position = pos;
+		}
+		
+		
+		// Uses new centre and cell's relative positions to rearrange platforms
+		public void repositionAroundCentre(Vector2 centre)
+		{
+			// Cell traversal vectors
+			Vector2 rightUp = new Vector2(cellSize_*Mathf.Sin(Mathf.PI/3.0f),
+												cellSize_*Mathf.Cos(Mathf.PI/3.0f));
+			Vector2 down = -cellSize_ * Vector2.up;
+			
+			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
+			Cell firstCellOfRow = corners_[CellIndex.topLeft];
+			while (firstCellOfRow!=null) {
+				
+				Cell    c = firstCellOfRow;
+				Vector2 v = firstPosOfRow;
+				while (c!=null) {
+					// Check cell has contents
+					if (c.type != CellType.Undefined && c.type != CellType.Empty)
+						repositionCell(c, v);
+					// Traverse up and right
+					c = c[1];
+					v += rightUp;
+				}
+				
+				// Traverse left side then bottom-left side
+				if (firstCellOfRow[3]!=null) {
+					firstCellOfRow = firstCellOfRow[3];
+					firstPosOfRow += down;
+				} else {
+					firstCellOfRow = firstCellOfRow[2];
+					firstPosOfRow += down + rightUp;
+				}
+			}
 		}
 		
 		
