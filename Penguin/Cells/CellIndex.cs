@@ -5,7 +5,7 @@ namespace Penguin
 {
 	public struct CellIndex
 	{
-		// Possible values
+		// Convenience values for readability
 		public static readonly CellIndex topMiddle    = new CellIndex(0);
 		public static readonly CellIndex topRight     = new CellIndex(1);
 		public static readonly CellIndex bottomRight  = new CellIndex(2);
@@ -17,9 +17,8 @@ namespace Penguin
 		
 		private void rangeCheck()
 		{
-			//while (index > 5) index -= 6;
-			//while (index < 0) index += 6;
-			index = index & 6;
+			while (index > 5) index -= 6;
+			while (index < 0) index += 6;
 		}
 		
 		
