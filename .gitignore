@@ -221,3 +221,10 @@ pip-log.txt
 
 *.userprefs
 *.csproj.test-cache
+
+
+#############
+## Test build
+#############
+
+PenguinTest/bin/
