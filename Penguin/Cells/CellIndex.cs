@@ -15,12 +15,18 @@ namespace Penguin
 		
 		int index;
 		
+		private void rangeCheck()
+		{
+			//while (index > 5) index -= 6;
+			//while (index < 0) index += 6;
+			index = index & 6;
+		}
+		
 		
 		public CellIndex(int i)
 		{
 			index = i;
-			while (index > 5) index -= 6;
-			while (index < 0) index += 6;
+			rangeCheck();
 		}
 		
 		
@@ -33,9 +39,7 @@ namespace Penguin
 			result.index = Mathf.FloorToInt(degrees / 60.0f);
 			if (result.index > 5) result.index -= 6;
 			
-			while (result.index > 5) result.index -= 6;
-			while (result.index < 0) result.index += 6;
-			
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -44,7 +48,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs.index + rhs.index;
-			while (result.index > 5) result.index -= 6;
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -53,7 +57,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs.index + rhs;
-			while (result.index > 5) result.index -= 6;
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -62,7 +66,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs + rhs.index;
-			while (result.index > 5) result.index -= 6;
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -71,7 +75,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs.index - rhs.index;
-			while (result.index < 0) result.index += 6;
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -80,7 +84,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs.index - rhs;
-			while (result.index < 0) result.index += 6;
+			result.rangeCheck();
 			return result;
 		}
 		
@@ -89,7 +93,7 @@ namespace Penguin
 		{
 			CellIndex result = new CellIndex(0);
 			result.index = lhs - rhs.index;
-			while (result.index < 0) result.index += 6;
+			result.rangeCheck();
 			return result;
 		}
 		
