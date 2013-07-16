@@ -14,6 +14,9 @@ namespace Penguin
 		// Used to calculate cells relative positions
 		private float cellSize_;
 		
+		// Informtion for CellMap to build with 
+		private CellPattern currentPattern_ = new SingleTypePattern(CellType.Normal);
+		
 		// Referenced when instaniating cells
 		private Dictionary<CellType, GameObject> platformDict_;
 		
@@ -409,6 +412,14 @@ namespace Penguin
 					firstPosOfRow += down + rightUp;
 				}
 			}
+		}
+		
+		
+		// Prepare CellMap to change pattern
+		public void changePattern(CellPattern pattern)
+		{
+			// Expand this later to deal with transitions
+			currentPattern_ = pattern;
 		}
 		
 		
