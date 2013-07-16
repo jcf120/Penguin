@@ -46,6 +46,11 @@
     <Compile Include="Cells\CellMap.cs" />
     <Compile Include="Cells\CellType.cs" />
     <Compile Include="Cells\CellIndex.cs" />
+    <Compile Include="Cells\Patterns\CellPattern.cs" />
+    <Compile Include="Cells\Patterns\HorizontalBreaksPattern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Cells\Patterns\" />
+  </ItemGroup>
 </Project>
