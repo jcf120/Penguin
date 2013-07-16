@@ -15,10 +15,10 @@ namespace Penguin
 		private float cellSize_;
 		
 		// Informtion for CellMap to build with 
-		private CellPattern currentPattern_   = new SingleTypePattern(CellType.Normal);
-		private CellIndex   patternDirection_ = new CellIndex(0);
+		private CellPattern currentPattern_;
+		private CellIndex   patternDirection_;
 		// Displacement of CellMap's centre from current CellPattern's origin
-		// ...
+		CellVector patternPosition_;
 		
 		
 		// Referenced when instaniating cells
@@ -65,6 +65,11 @@ namespace Penguin
 			cellSize_     = cellSize;
 			platformDict_ = platfromDict;
 			buildInitialCells(CellType.Normal);
+			
+			// Setup default pattern
+			currentPattern_   = new SingleTypePattern(CellType.Normal);
+			patternDirection_ = new CellIndex(0);
+			patternPosition_  = new CellVector(patternDirection_, radius-1);
 		}
 		
 		
@@ -423,6 +428,8 @@ namespace Penguin
 		public void changePattern(CellPattern pattern, CellIndex direction)
 		{
 			// Expand this later to deal with transitions
+			patternDirection_ = direction;
+			
 			currentPattern_ = pattern;
 		}
 		

@@ -83,6 +83,14 @@ namespace Penguin
 			lhs.y -= rhs.y;
 			return lhs;
 		}
+		
+		
+		public static CellVector operator* (int i, CellVector cv)
+		{
+			cv.x *= i;
+			cv.y *= i;
+			return cv;
+		}
 	}
 }
 
