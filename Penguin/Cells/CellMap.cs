@@ -429,8 +429,8 @@ namespace Penguin
 		{
 			// Expand this later to deal with transitions
 			patternDirection_ = direction;
-			
-			currentPattern_ = pattern;
+			patternPosition_  = new CellVector(direction, radius_-1);
+			currentPattern_   = pattern;
 		}
 		
 		

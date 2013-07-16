@@ -1,45 +1,46 @@
 using System;
+using UnityEngine;
 
 namespace Penguin
 {
 	public struct CellVector
 	{
-		private int x_; // represents up and right
-		private int y_; // represents up
-		public int x {get{return x_;}set{x_=value;}}
-		public int y {get{return y_;}set{y_=value;}}
+		private int i_; // represents up and right
+		private int j_; // represents up
+		public int i {get{return i_;}set{i_=value;}}
+		public int j {get{return j_;}set{j_=value;}}
 		
 		
-		public CellVector(int x, int y)
+		public CellVector(int i, int j)
 		{
-			x_ = x;
-			y_ = y;
+			i_ = i;
+			j_ = j;
 		}
 		
 		
 		public CellVector(CellIndex dir, int mag)
 		{
 			if        (dir == CellIndex.topMiddle) {
-				x_ = 0;
-				y_ = mag;
+				i_ = 0;
+				j_ = mag;
 			} else if (dir == CellIndex.topRight) {
-				x_ = mag;
-				y_ = 0;
+				i_ = mag;
+				j_ = 0;
 			} else if (dir == CellIndex.bottomRight) {
-				x_ = mag;
-				y_ = mag;
+				i_ = mag;
+				j_ = mag;
 			} else if (dir == CellIndex.bottomMiddle) {
-				x_ = 0;
-				y_ = -mag;
+				i_ = 0;
+				j_ = -mag;
 			} else if (dir == CellIndex.bottomLeft) {
-				x_ = -mag;
-				y_ = 0;
+				i_ = -mag;
+				j_ = 0;
 			} else if (dir == CellIndex.topLeft) {
-				x_ = -mag;
-				y_ = mag;
+				i_ = -mag;
+				j_ = mag;
 			} else { // Case for invalid direction
-				x_ = 0;
-				y_ = 0;
+				i_ = 0;
+				j_ = 0;
 			}
 		}
 		
@@ -50,45 +51,54 @@ namespace Penguin
 			if        (ang == CellIndex.topMiddle) {
 				// No change
 			} else if (ang == CellIndex.topRight) {
-				result.x = x_ + y_;
-				result.y = -x_;
+				result.i = i_ + j_;
+				result.j = -i_;
 			} else if (ang == CellIndex.bottomRight) {
-				result.x = y_;
-				result.y = -x_ - y_;
+				result.i = j_;
+				result.j = -i_ - j_;
 			} else if (ang == CellIndex.bottomMiddle) {
-				result.x = -x_;
-				result.y = -y_;
+				result.i = -i_;
+				result.j = -j_;
 			} else if (ang == CellIndex.bottomLeft) {
-				result.x = -x_ - y_;
-				result.y = x_;
+				result.i = -i_ - j_;
+				result.j = i_;
 			} else if (ang == CellIndex.topLeft) {
-				result.x = -y_;
-				result.y = x_ + y_;
+				result.i = -j_;
+				result.j = i_ + j_;
 			}
 			return result;
 		}
 		
 		
+		private static readonly float sin60 = Mathf.Sin(Mathf.PI/3.0f);
+		private static readonly float cos60 = Mathf.Cos(Mathf.PI/3.0f);
+		public Vector2 vector2(float unitLength)
+		{
+			return new Vector2(unitLength*i_*sin60,
+							   unitLength*(j_ + i_*cos60));
+		}
+		
+		
 		public static CellVector operator+ (CellVector lhs, CellVector rhs)
 		{
-			lhs.x += rhs.x;
-			lhs.y += rhs.y;
+			lhs.i += rhs.i;
+			lhs.j += rhs.j;
 			return lhs;
 		}
 		
 		
 		public static CellVector operator- (CellVector lhs, CellVector rhs)
 		{
-			lhs.x -= rhs.x;
-			lhs.y -= rhs.y;
+			lhs.i -= rhs.i;
+			lhs.j -= rhs.j;
 			return lhs;
 		}
 		
 		
-		public static CellVector operator* (int i, CellVector cv)
+		public static CellVector operator* (int factor, CellVector cv)
 		{
-			cv.x *= i;
-			cv.y *= i;
+			cv.i *= factor;
+			cv.j *= factor;
 			return cv;
 		}
 	}

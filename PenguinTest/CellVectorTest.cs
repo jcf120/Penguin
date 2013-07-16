@@ -16,43 +16,43 @@ namespace PenguinTest
 			
 			
 			// cv(0,10).rot(1) = cv(10,0)
-			cv.x  = 0;  cv.y  = 10;
-			exp.x = 10; exp.y = 0;
+			cv.i  = 0;  cv.j  = 10;
+			exp.i = 10; exp.j = 0;
 			act = cv.rotated(CellIndex.topRight);
-			Assert.AreEqual(exp.x, act.x, "x: cv(0,10).rot(1) = cv(10,0)");
-			Assert.AreEqual(exp.y, act.y, "y: cv(0,10).rot(1) = cv(10,0)");
+			Assert.AreEqual(exp.i, act.i, "x: cv(0,10).rot(1) = cv(10,0)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(0,10).rot(1) = cv(10,0)");
 			
 			
 			// cv(1,1).rot(2) = cv(2,-1)
-			cv.x  = 1;  cv.y  = 1;
-			exp.x = 1;  exp.y = -2;
+			cv.i  = 1;  cv.j  = 1;
+			exp.i = 1;  exp.j = -2;
 			act = cv.rotated(CellIndex.bottomRight);
-			Assert.AreEqual(exp.x, act.x, "x: cv(1,1).rot(2) = cv(2,-1)");
-			Assert.AreEqual(exp.y, act.y, "y: cv(1,1).rot(2) = cv(2,-1)");
+			Assert.AreEqual(exp.i, act.i, "x: cv(1,1).rot(2) = cv(2,-1)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(1,1).rot(2) = cv(2,-1)");
 			
 			
 			// cv(1,1).rot(3) = cv(-1,-1)
-			cv.x  = 1;  cv.y  = 1;
-			exp.x = -1; exp.y = -1;
+			cv.i  = 1;  cv.j  = 1;
+			exp.i = -1; exp.j = -1;
 			act = cv.rotated(CellIndex.bottomMiddle);
-			Assert.AreEqual(exp.x, act.x, "x: cv(1,1).rot(3) = cv(-1,-1)");
-			Assert.AreEqual(exp.y, act.y, "y: cv(1,1).rot(3) = cv(-1,-1)");
+			Assert.AreEqual(exp.i, act.i, "x: cv(1,1).rot(3) = cv(-1,-1)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(1,1).rot(3) = cv(-1,-1)");
 			
 			
 			// cv(1,1).rot(4) = cv(-2,1)
-			cv.x  = 1;  cv.y  = 1;
-			exp.x = -2; exp.y = 1;
+			cv.i  = 1;  cv.j  = 1;
+			exp.i = -2; exp.j = 1;
 			act = cv.rotated(CellIndex.bottomLeft);
-			Assert.AreEqual(exp.x, act.x, "x: cv(1,1).rot(4) = cv(-2,1)");
-			Assert.AreEqual(exp.y, act.y, "y: cv(1,1).rot(4) = cv(-2,1)");
+			Assert.AreEqual(exp.i, act.i, "x: cv(1,1).rot(4) = cv(-2,1)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(1,1).rot(4) = cv(-2,1)");
 			
 			
 			// cv(1,1).rot(5) = cv(2,-1)
-			cv.x  = 1;  cv.y  = 1;
-			exp.x = -1; exp.y = 2;
+			cv.i  = 1;  cv.j  = 1;
+			exp.i = -1; exp.j = 2;
 			act = cv.rotated(CellIndex.topLeft);
-			Assert.AreEqual(exp.x, act.x, "x: cv(1,1).rot(5) = cv(2,-1)");
-			Assert.AreEqual(exp.y, act.y, "y: cv(1,1).rot(5) = cv(2,-1)");
+			Assert.AreEqual(exp.i, act.i, "x: cv(1,1).rot(5) = cv(2,-1)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(1,1).rot(5) = cv(2,-1)");
 		}
 	}
 }
