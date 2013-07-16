@@ -44,25 +44,19 @@ namespace Penguin
 		
 		
 		// Needed to find relative position to player
-		public Vector2 centre {
-			get{
-				if (corners_[0].platform==null)
-					Debug.LogError("CellMap centre undefined before instantiation");
-				Vector2 vec = new Vector2(corners_[CellIndex.topMiddle].platform.transform.position.x,
-										  corners_[CellIndex.topMiddle].platform.transform.position.z);
-				vec -= (radius_-1) * cellSize_ * Vector2.up;
-				return vec;
-			}
-		}
+		private Vector2 centre_;
+		public Vector2 centre {get{return centre_;}}
 		
 		
 		public CellMap (int radius,
 						float cellSize,
+						Vector2 centre,
 						Dictionary<CellType, GameObject> platfromDict)
 		{
 			if (radius<1) Debug.LogError("CellMap cannot have radius below 1");
 			radius_       = radius;
 			cellSize_     = cellSize;
+			centre_		  = centre;
 			platformDict_ = platfromDict;
 			buildInitialCells(CellType.Normal);
 			
@@ -231,7 +225,7 @@ namespace Penguin
 		
 		
 		private bool initialCellsAreInstantiated_;
-		public void instantiateInitialCells(Vector2 centre)
+		public void instantiateInitialCells()
 		{
 			if (initialCellsAreInstantiated_) Debug.LogError("Cells have been instantiated once already");
 			initialCellsAreInstantiated_ = true;
@@ -241,7 +235,7 @@ namespace Penguin
 												cellSize_*Mathf.Cos(Mathf.PI/3.0f));
 			Vector2 down = -cellSize_ * Vector2.up;
 			
-			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
+			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre_;
 			Cell firstCellOfRow = corners_[CellIndex.topLeft];
 			while (firstCellOfRow!=null) {
 				
@@ -270,26 +264,29 @@ namespace Penguin
 		{
 			Cell oldCorner = corners_[cornerIndex];
 			
-			// Position relative to inside row
-			// First convert index to angle
-			float rad = Mathf.PI * (float)cornerIndex / 3.0f;
-			Vector2 relPos = new Vector2(cellSize_ * Mathf.Sin(rad),
-										 cellSize_ * Mathf.Cos(rad));
+			// New corner position relative to centre
+			CellVector newCornerPos = new CellVector(cornerIndex, radius_);
+			Debug.Log(centre_);
+			Debug.Log(newCornerPos.i);
+			Debug.Log(newCornerPos.j);
+			
 			
 			// Build outwards
 			Cell newCorner = new Cell(CellType.Normal);
 			// Link inwards
 			linkCells(newCorner, oldCorner, cornerIndex-3);
 			// Instantiate
-			Vector2 oldPos = new Vector2(oldCorner.platform.transform.position.x,
-										 oldCorner.platform.transform.position.z);
-			instantiateCell(newCorner, oldPos+relPos);
-			// Refernce new corner
+			instantiateCell(newCorner, centre_ + newCornerPos.vector2(cellSize_));
+			// Reference new corner
 			corners_[cornerIndex] = newCorner;
 			
 			// Build anti-clockwise
 			Cell prevCell  = newCorner;
 			Cell innerCell = oldCorner[cornerIndex-2];
+			CellVector stepVec = new CellVector(cornerIndex-2, 1);
+			Debug.Log(stepVec.i);
+			Debug.Log(stepVec.j);
+			CellVector relPos = newCornerPos;
 			while (innerCell!=null) {
 				Cell c = new Cell(CellType.Normal);
 				// Link backwards
@@ -299,10 +296,9 @@ namespace Penguin
 				// Link to cell sandwiched between previous two
 				linkCells(c, innerCell[cornerIndex+1], cornerIndex+2);
 				
-				// Instantiate cell relative to inner cell
-				Vector2 innerPos = new Vector2(innerCell.platform.transform.position.x,
-											   innerCell.platform.transform.position.z);
-				instantiateCell(c, innerPos+relPos);
+				// New cells position relative to centre
+				relPos += stepVec;
+				instantiateCell(c, centre_ + relPos.vector2(cellSize_));
 				
 				prevCell = c;
 				innerCell = innerCell[cornerIndex-2];
@@ -313,6 +309,8 @@ namespace Penguin
 			// Build clockwise
 			prevCell  = newCorner;
 			innerCell = oldCorner[cornerIndex+2];
+			stepVec = new CellVector(cornerIndex+2, 1);
+			relPos = newCornerPos;
 			while (innerCell!=null) {
 				Cell c = new Cell(CellType.Normal);
 				// Link backwards
@@ -322,10 +320,10 @@ namespace Penguin
 				// Link to cell sandwiched between previous two
 				linkCells(c, innerCell[cornerIndex-1], cornerIndex-2);
 				
-				// Instantiate cell relative to inner cell
-				Vector2 innerPos = new Vector2(innerCell.platform.transform.position.x,
-											   innerCell.platform.transform.position.z);
-				instantiateCell(c, innerPos+relPos);
+				
+				// New cells position relative to centre
+				relPos += stepVec;
+				instantiateCell(c, centre_+relPos.vector2(cellSize_));
 				
 				prevCell = c;
 				innerCell = innerCell[cornerIndex+2];
@@ -373,6 +371,8 @@ namespace Penguin
 			spawnSidesFromCorner(direction);
 			// Delete opposite sides
 			deleteSidesFromCorner(direction-3);
+			// Update centre
+			centre_ += new CellVector(direction, 1).vector2(cellSize_);
 		}
 		
 		
@@ -392,12 +392,14 @@ namespace Penguin
 		// Uses new centre and cell's relative positions to rearrange platforms
 		public void repositionAroundCentre(Vector2 centre)
 		{
+			centre_ = centre;
+			
 			// Cell traversal vectors
 			Vector2 rightUp = new Vector2(cellSize_*Mathf.Sin(Mathf.PI/3.0f),
 												cellSize_*Mathf.Cos(Mathf.PI/3.0f));
 			Vector2 down = -cellSize_ * Vector2.up;
 			
-			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre;
+			Vector2 firstPosOfRow = ((radius_-1) * (-rightUp-down)) + centre_;
 			Cell firstCellOfRow = corners_[CellIndex.topLeft];
 			while (firstCellOfRow!=null) {
 				

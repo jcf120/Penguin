@@ -28,7 +28,7 @@ namespace Penguin
 				j_ = 0;
 			} else if (dir == CellIndex.bottomRight) {
 				i_ = mag;
-				j_ = mag;
+				j_ = -mag;
 			} else if (dir == CellIndex.bottomMiddle) {
 				i_ = 0;
 				j_ = -mag;
@@ -38,9 +38,10 @@ namespace Penguin
 			} else if (dir == CellIndex.topLeft) {
 				i_ = -mag;
 				j_ = mag;
-			} else { // Case for invalid direction
+			} else {
 				i_ = 0;
 				j_ = 0;
+				Debug.LogError("Instantiating CellVector from invalid CellIndex");
 			}
 		}
 		
