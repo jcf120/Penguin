@@ -15,7 +15,11 @@ namespace Penguin
 		private float cellSize_;
 		
 		// Informtion for CellMap to build with 
-		private CellPattern currentPattern_ = new SingleTypePattern(CellType.Normal);
+		private CellPattern currentPattern_   = new SingleTypePattern(CellType.Normal);
+		private CellIndex   patternDirection_ = new CellIndex(0);
+		// Displacement of CellMap's centre from current CellPattern's origin
+		// ...
+		
 		
 		// Referenced when instaniating cells
 		private Dictionary<CellType, GameObject> platformDict_;
@@ -416,7 +420,7 @@ namespace Penguin
 		
 		
 		// Prepare CellMap to change pattern
-		public void changePattern(CellPattern pattern)
+		public void changePattern(CellPattern pattern, CellIndex direction)
 		{
 			// Expand this later to deal with transitions
 			currentPattern_ = pattern;

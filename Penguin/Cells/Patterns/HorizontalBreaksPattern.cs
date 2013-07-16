@@ -19,8 +19,7 @@ namespace Penguin
 		// The pattern forming algorithm
 		public override CellType typeAtIndex(int row, int column)
 		{
-			// After converting coordinates column is ignored, only interested in row
-			convertToWavy(ref row, ref column);
+			// Column is ignored, only interested in row
 			
 			// Length of repeating pattern segment
 			int segmentLength = breakSize_ + intervalSize_;
