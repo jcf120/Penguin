@@ -44,6 +44,31 @@ namespace Penguin
 		}
 		
 		
+		public CellVector rotated(CellIndex ang)
+		{
+			CellVector result = new CellVector(0, 0);
+			if        (ang == CellIndex.topMiddle) {
+				// No change
+			} else if (ang == CellIndex.topRight) {
+				result.x = x_ + y_;
+				result.y = -x_;
+			} else if (ang == CellIndex.bottomRight) {
+				result.x = y_;
+				result.y = -x_ - y_;
+			} else if (ang == CellIndex.bottomMiddle) {
+				result.x = -x_;
+				result.y = -y_;
+			} else if (ang == CellIndex.bottomLeft) {
+				result.x = -x_ - y_;
+				result.y = x_;
+			} else if (ang == CellIndex.topLeft) {
+				result.x = -y_;
+				result.y = x_ + y_;
+			}
+			return result;
+		}
+		
+		
 		public static CellVector operator+ (CellVector lhs, CellVector rhs)
 		{
 			lhs.x += rhs.x;

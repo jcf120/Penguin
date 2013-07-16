@@ -45,6 +45,7 @@
     <Compile Include="CellMapTest.cs" />
     <Compile Include="CellIndexTest.cs" />
     <Compile Include="PatternCoordinateTest.cs" />
+    <Compile Include="CellVectorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Penguin\Penguin.csproj">
