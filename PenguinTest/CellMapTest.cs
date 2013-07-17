@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using Penguin;
+using UnityEngine;
 
 namespace PenguinTest
 {
@@ -12,7 +13,7 @@ namespace PenguinTest
 		[SetUp()]
 		public void Init()
 		{
-			cellMap = new CellMap(3, 1.0f, null);
+			cellMap = new CellMap(3, 1.0f, Vector2.zero, null);
 		}
 		
 		[Test()]

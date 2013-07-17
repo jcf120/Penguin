@@ -17,7 +17,7 @@ namespace Penguin
 		
 		
 		// The pattern forming algorithm
-		public override CellType typeAtIndex(int row, int column)
+		public override CellType typeAtCoordinate(PatternCoordinate coor)
 		{
 			// Column is ignored, only interested in row
 			
@@ -26,11 +26,11 @@ namespace Penguin
 			
 			// Determine relative index to repeating segment
 			// Can't use modulo, as index isn't guaranteed positive
-			while (row < 0)             row += segmentLength;
-			while (row > segmentLength) row -= segmentLength;
+			while (coor.row < 0)             coor.row += segmentLength;
+			while (coor.row > segmentLength) coor.row -= segmentLength;
 			
 			// Choose cell type
-			if (row < intervalSize_)
+			if (coor.row < intervalSize_)
 				return CellType.Normal;
 			else
 				return CellType.Empty;

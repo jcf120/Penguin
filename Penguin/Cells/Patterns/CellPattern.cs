@@ -24,7 +24,7 @@ namespace Penguin
 		// \     /     \     /     \     /
 		//   ---         ---         ---
 		// coordinate (0, 0) is the pattern's ideal entry point
-		public abstract CellType typeAtIndex(int row, int column);
+		public abstract CellType typeAtCoordinate(PatternCoordinate coor);
 	}
 }
 

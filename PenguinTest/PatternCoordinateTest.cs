@@ -43,6 +43,15 @@ namespace PenguinTest
 			Assert.AreEqual(exp.row, act.row, "row: pc(0,0) + cv(2,0) = pc(2,1)");
 			
 			
+			// pc(0,0) + cv(3,0) = pc(3,1)
+			pc.col  =  0; pc.row  =  0;
+			cv.i    =  3; cv.j    =  0;
+			exp.col =  3; exp.row =  1;
+			act = pc + cv;
+			Assert.AreEqual(exp.col, act.col, "col: pc(0,0) + cv(3,0) = pc(3,1)");
+			Assert.AreEqual(exp.row, act.row, "row: pc(0,0) + cv(3,0) = pc(3,1)");
+			
+			
 			// pc(0,0) - cv(1,0) = pc(-1,-1)
 			pc.col  =  0; pc.row  =  0;
 			cv.i    =  1; cv.j    =  0;
@@ -61,6 +70,24 @@ namespace PenguinTest
 			Assert.AreEqual(exp.row, act.row, "row: pc(0,0) - cv(2,0) = pc(-2,-1)");
 			
 			
+			// pc(1,0) - cv(2,0) = pc(-1,-1)
+			pc.col  =  1; pc.row  =  0;
+			cv.i    =  2; cv.j    =  0;
+			exp.col = -1; exp.row = -1;
+			act = pc - cv;
+			Assert.AreEqual(exp.col, act.col, "col: pc(1,0) - cv(2,0) = pc(-1,-1)");
+			Assert.AreEqual(exp.row, act.row, "row: pc(1,0) - cv(2,0) = pc(-1,-1)");
+			
+			
+			// pc(1,2) - cv(5,0) = pc(-4,0)
+			pc.col  =  1; pc.row  =  2;
+			cv.i    =  5; cv.j    =  0;
+			exp.col = -4; exp.row =  0;
+			act = pc - cv;
+			Assert.AreEqual(exp.col, act.col, "col: pc(1,2) - cv(5,0) = pc(-4,0)");
+			Assert.AreEqual(exp.row, act.row, "row: pc(1,2) - cv(5,0) = pc(-4,0)");
+			
+			
 			// (pc(7,10) + cv(3,12)) - cv(3,12) = pc(7,10)
 			pc.col  =  7; pc.row  = 10;
 			cv.i    =  3; cv.j    = 13;
@@ -68,6 +95,15 @@ namespace PenguinTest
 			act = (pc + cv) - cv;
 			Assert.AreEqual(exp.col, act.col, "col: (pc(7,10) + cv(3,12)) - cv(3,12) = pc(7,10)");
 			Assert.AreEqual(exp.row, act.row, "row: (pc(7,10) + cv(3,12)) - cv(3,12) = pc(7,10)");
+			
+			
+			// (pc(2,10) - cv(8,99)) + cv(8,99) = pc(2,10)
+			pc.col  =  2; pc.row  = 10;
+			cv.i    =  8; cv.j    = 99;
+			exp.col =  2; exp.row = 10;
+			act = (pc - cv) + cv;
+			Assert.AreEqual(exp.col, act.col, "col: (pc(2,10) - cv(8,99)) + cv(8,99) = pc(2,10)");
+			Assert.AreEqual(exp.row, act.row, "row: (pc(2,10) - cv(8,99)) + cv(8,99) = pc(2,10)");
 		}
 	}
 }

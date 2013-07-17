@@ -11,7 +11,7 @@ namespace Penguin
 			type_ = type;
 		}
 		
-		public override CellType typeAtIndex(int row, int column)
+		public override CellType typeAtCoordinate(PatternCoordinate coor)
 		{
 			return type_;
 		}

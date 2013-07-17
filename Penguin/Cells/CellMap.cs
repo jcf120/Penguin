@@ -260,19 +260,29 @@ namespace Penguin
 		}
 		
 		
+		// Look up cell from pattern
+		private Cell cellForVector(CellVector mapVec, CellIndex spawnDir)
+		{
+			// Translate and rotate into Pattern's frame
+			CellVector relPos = patternPosition_ - mapVec;
+			relPos = relPos.rotated(spawnDir-patternDirection_);
+			// Convert to wavy coordinates
+			PatternCoordinate pc = new PatternCoordinate(0,0) + relPos;
+			
+			return new Cell(currentPattern_.typeAtCoordinate(pc));
+		}
+		
+		
 		private void spawnSidesFromCorner(CellIndex cornerIndex)
 		{
 			Cell oldCorner = corners_[cornerIndex];
 			
 			// New corner position relative to centre
 			CellVector newCornerPos = new CellVector(cornerIndex, radius_);
-			Debug.Log(centre_);
-			Debug.Log(newCornerPos.i);
-			Debug.Log(newCornerPos.j);
 			
 			
 			// Build outwards
-			Cell newCorner = new Cell(CellType.Normal);
+			Cell newCorner = cellForVector(newCornerPos, cornerIndex);
 			// Link inwards
 			linkCells(newCorner, oldCorner, cornerIndex-3);
 			// Instantiate
@@ -284,11 +294,9 @@ namespace Penguin
 			Cell prevCell  = newCorner;
 			Cell innerCell = oldCorner[cornerIndex-2];
 			CellVector stepVec = new CellVector(cornerIndex-2, 1);
-			Debug.Log(stepVec.i);
-			Debug.Log(stepVec.j);
 			CellVector relPos = newCornerPos;
 			while (innerCell!=null) {
-				Cell c = new Cell(CellType.Normal);
+				Cell c = cellForVector(relPos, cornerIndex);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex+1);
 				// Link inwards
@@ -312,7 +320,7 @@ namespace Penguin
 			stepVec = new CellVector(cornerIndex+2, 1);
 			relPos = newCornerPos;
 			while (innerCell!=null) {
-				Cell c = new Cell(CellType.Normal);
+				Cell c = cellForVector(relPos, cornerIndex);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex-1);
 				// Link inwards
@@ -330,6 +338,10 @@ namespace Penguin
 			}
 			// Reference new clockwise corner
 			corners_[cornerIndex+1] = prevCell;
+			
+			// Update Pattern's relative position
+			patternPosition_ += new CellVector(cornerIndex-3, 1);
+			Debug.Log("pattern pos: "+patternPosition_.i+", "+patternPosition_.j);
 		}
 		
 		

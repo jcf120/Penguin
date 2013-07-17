@@ -53,6 +53,14 @@ namespace PenguinTest
 			act = cv.rotated(CellIndex.topLeft);
 			Assert.AreEqual(exp.i, act.i, "x: cv(1,1).rot(5) = cv(2,-1)");
 			Assert.AreEqual(exp.j, act.j, "y: cv(1,1).rot(5) = cv(2,-1)");
+			
+			
+			// cv(11,5).rot(1).rot(3).rot(2) = cv(11,5)
+			cv.i  = 11;  cv.j = 5;
+			exp.i = 11; exp.j = 5;
+			act = cv.rotated(CellIndex.topRight).rotated(CellIndex.bottomMiddle).rotated(CellIndex.bottomRight);
+			Assert.AreEqual(exp.i, act.i, "x: cv(11,5).rot(1).rot(3).rot(2) = cv(11,5)");
+			Assert.AreEqual(exp.j, act.j, "y: cv(11,5).rot(1).rot(3).rot(2) = cv(11,5)");
 		}
 	}
 }
