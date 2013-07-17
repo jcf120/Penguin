@@ -50,7 +50,8 @@ namespace Penguin
 		{
 			CellVector result = new CellVector(0, 0);
 			if        (ang == CellIndex.topMiddle) {
-				// No change
+				result.i = i_;
+				result.j = j_;
 			} else if (ang == CellIndex.topRight) {
 				result.i = i_ + j_;
 				result.j = -i_;
@@ -66,6 +67,8 @@ namespace Penguin
 			} else if (ang == CellIndex.topLeft) {
 				result.i = -j_;
 				result.j = i_ + j_;
+			} else {
+				Debug.LogError("CellVector can't rotate by invalid angle: "+ang);
 			}
 			return result;
 		}

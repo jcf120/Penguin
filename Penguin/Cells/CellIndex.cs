@@ -97,6 +97,12 @@ namespace Penguin
 		}
 		
 		
+		public static CellIndex operator- (CellIndex ci)
+		{
+		    return new CellIndex(-ci.index);
+		}
+		
+		
 		public static implicit operator int(CellIndex c)
 		{
 			return c.index;

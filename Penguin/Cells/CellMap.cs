@@ -264,8 +264,8 @@ namespace Penguin
 		private Cell cellForVector(CellVector mapVec, CellIndex spawnDir)
 		{
 			// Translate and rotate into Pattern's frame
-			CellVector relPos = patternPosition_ - mapVec;
-			relPos = relPos.rotated(spawnDir-patternDirection_);
+			CellVector relPos = mapVec - patternPosition_;
+			relPos = relPos.rotated(-patternDirection_);
 			// Convert to wavy coordinates
 			PatternCoordinate pc = new PatternCoordinate(0,0) + relPos;
 			
@@ -279,7 +279,6 @@ namespace Penguin
 			
 			// New corner position relative to centre
 			CellVector newCornerPos = new CellVector(cornerIndex, radius_);
-			
 			
 			// Build outwards
 			Cell newCorner = cellForVector(newCornerPos, cornerIndex);
@@ -296,6 +295,9 @@ namespace Penguin
 			CellVector stepVec = new CellVector(cornerIndex-2, 1);
 			CellVector relPos = newCornerPos;
 			while (innerCell!=null) {
+				// New cells position relative to centre
+				relPos += stepVec;
+				
 				Cell c = cellForVector(relPos, cornerIndex);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex+1);
@@ -303,9 +305,6 @@ namespace Penguin
 				linkCells(c, innerCell, cornerIndex+3);
 				// Link to cell sandwiched between previous two
 				linkCells(c, innerCell[cornerIndex+1], cornerIndex+2);
-				
-				// New cells position relative to centre
-				relPos += stepVec;
 				instantiateCell(c, centre_ + relPos.vector2(cellSize_));
 				
 				prevCell = c;
@@ -320,6 +319,9 @@ namespace Penguin
 			stepVec = new CellVector(cornerIndex+2, 1);
 			relPos = newCornerPos;
 			while (innerCell!=null) {
+				// New cells position relative to centre
+				relPos += stepVec;
+				
 				Cell c = cellForVector(relPos, cornerIndex);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex-1);
@@ -329,8 +331,6 @@ namespace Penguin
 				linkCells(c, innerCell[cornerIndex-1], cornerIndex-2);
 				
 				
-				// New cells position relative to centre
-				relPos += stepVec;
 				instantiateCell(c, centre_+relPos.vector2(cellSize_));
 				
 				prevCell = c;
@@ -338,10 +338,6 @@ namespace Penguin
 			}
 			// Reference new clockwise corner
 			corners_[cornerIndex+1] = prevCell;
-			
-			// Update Pattern's relative position
-			patternPosition_ += new CellVector(cornerIndex-3, 1);
-			Debug.Log("pattern pos: "+patternPosition_.i+", "+patternPosition_.j);
 		}
 		
 		
@@ -385,6 +381,9 @@ namespace Penguin
 			deleteSidesFromCorner(direction-3);
 			// Update centre
 			centre_ += new CellVector(direction, 1).vector2(cellSize_);
+			// Update Pattern's relative position
+			patternPosition_ -= new CellVector(direction, 1);
+			CellVector cv = new CellVector(direction-3, 1);
 		}
 		
 		
@@ -443,7 +442,7 @@ namespace Penguin
 		{
 			// Expand this later to deal with transitions
 			patternDirection_ = direction;
-			patternPosition_  = new CellVector(direction, radius_-1);
+			patternPosition_  = new CellVector(direction, radius_);
 			currentPattern_   = pattern;
 		}
 		

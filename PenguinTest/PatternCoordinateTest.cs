@@ -104,6 +104,47 @@ namespace PenguinTest
 			act = (pc - cv) + cv;
 			Assert.AreEqual(exp.col, act.col, "col: (pc(2,10) - cv(8,99)) + cv(8,99) = pc(2,10)");
 			Assert.AreEqual(exp.row, act.row, "row: (pc(2,10) - cv(8,99)) + cv(8,99) = pc(2,10)");
+			
+			
+		}
+		
+		
+		[Test]
+		public void traversal()
+		{
+			int[] exps = {
+				5, 2,
+				6, 2,
+				7, 1,
+				8, 1
+			};
+			PatternCoordinate pc = new PatternCoordinate(0, 0) + new CellVector(5, 0);
+			for (int i=0; i<exps.Length/2; i+=2) {
+				Assert.AreEqual(exps[i  ], pc.col, "col: i="+i);
+				Assert.AreEqual(exps[i+1], pc.row, "row: i="+i);
+				pc += new CellVector(1, -1);
+			}
+		}
+		
+		
+		[Test]
+		public void referenceFrameEquivalence()
+		{
+			CellVector cv1a = new CellVector(CellIndex.topMiddle, 10);
+			CellVector cv1b = new CellVector(CellIndex.topLeft, 8);
+			PatternCoordinate pc1 = new PatternCoordinate(0, 0) + (cv1a - cv1b);
+			PatternCoordinate pc2 = (new PatternCoordinate(0, 0) + cv1a) - cv1b;
+			Assert.AreEqual(pc1.col, pc2.col);
+			Assert.AreEqual(pc1.row, pc2.row);
+			
+			
+			cv1a = new CellVector(2, -1);
+			cv1b = new CellVector(CellIndex.topLeft, 8);
+			pc1 = new PatternCoordinate(0, 0) + (cv1a - cv1b);
+			pc2 = (new PatternCoordinate(0, 0) + cv1a) - cv1b;
+			Assert.AreEqual(pc1.col, pc2.col);
+			Assert.AreEqual(pc1.row, pc2.row);
+			
 		}
 	}
 }
