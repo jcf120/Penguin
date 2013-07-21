@@ -107,16 +107,34 @@ namespace Penguin
 		}
 		
 		
+		public static int jFromInts(int x, int y)
+		{
+			return (int)Math.Floor((y-x+1)/3.0f);
+		}
+		
+		
+		public static int iFromInts(int x, int y)
+		{
+			return (int)Math.Floor((x-y+1)/3.0f);
+		}
+		
+		
 		// Quantise Vector2
 		public static CellVector fromVector2(Vector2 vec2)
 		{
 			CellVector cv = new CellVector(0, 0);
 			
-			// convert x to i
-			cv.i = (int)Math.Round(vec2.x / sin60, 0);
+			// Affine transform for finding i
+			float x = (vec2.x * (sin60 + 1)) + (vec2.y * ((2.0f * sin60 * sin60) - (0.5f / sin60)));
+			float y = vec2.y - (2.0f * vec2.x * sin60);
 			
-			// convert x&y to j
-			cv.j = (int)Math.Round(vec2.y - (vec2.x / cos60), 0);
+			cv.i = (int)Math.Floor(((int)Math.Floor(x) - (int)Math.Floor(y) + 1) / 3.0f);
+			
+			// Affine transform for finding j
+			x = (2.0f * vec2.x * sin60) - (vec2.y / sin60);
+			y = vec2.y * 2.0f;
+			
+			cv.j = (int)Math.Floor(((int)Math.Floor(y) - (int)Math.Floor(x) + 1) / 3.0f);
 			
 			return cv;
 		}
