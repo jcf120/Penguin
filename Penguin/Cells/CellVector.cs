@@ -105,6 +105,22 @@ namespace Penguin
 			cv.j *= factor;
 			return cv;
 		}
+		
+		
+		// Quantise Vector2
+		public static CellVector fromVector2(Vector2 vec2)
+		{
+			CellVector cv = new CellVector(0, 0);
+			
+			// convert x to i
+			cv.i = (int)Math.Round(vec2.x / sin60, 0);
+			
+			// convert x&y to j
+			cv.j = (int)Math.Round(vec2.y - (vec2.x / cos60), 0);
+			
+			return cv;
+		}
+		
 	}
 }
 
