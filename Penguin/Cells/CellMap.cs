@@ -449,6 +449,58 @@ namespace Penguin
 		}
 		
 		
+		// Returns cells at vector relative to centre
+		private Cell cellAtPosition(CellVector cellPosition)
+		{
+			// check bounds
+			if (cellPosition.i > radius_ || cellPosition.j > radius_)
+				Debug.LogError("Requested cell ("+cellPosition.i+", "+cellPosition.j+") outside CellMap bounds");
+			
+			// translate to bottom middle corner
+			cellPosition.j += radius_;
+			
+			// traverse upwards from bottom
+			Cell c = bottomMiddleCell;
+			for (int i=0; i<cellPosition.j; i++) {
+				c = c[CellIndex.topMiddle];
+				if (c==null) {
+					Debug.LogError("CellMap can't find cell for vector: "+cellPosition.i+", "+(cellPosition.j-radius_));
+					return c;
+				}
+			}
+			
+			// traverse diagonally upwards if positive i
+			if (Mathf.Abs(cellPosition.i) > 0) {
+				for (int i=0; i<cellPosition.i; i++) {
+					c = c[CellIndex.topRight];
+					if (c==null) {
+						Debug.LogError("CellMap can't find cell for vector: "+cellPosition.i+", "+(cellPosition.j-radius_));
+						return c;
+					}
+				}
+			}
+			// traverse diagonally downwards if negative i
+			else {
+				for (int i=0; i>cellPosition.i; i--) {
+					c = c[CellIndex.bottomLeft];
+					if (c==null) {
+						Debug.LogError("CellMap can't find cell for vector: "+cellPosition.i+", "+(cellPosition.j-radius_));
+						return c;
+					}
+				}
+			}
+			
+			return c;
+		}
+		
+		
+		// Returns type of cell at vector relative to centre
+		public CellType typeAtPosition(CellVector cellPosition)
+		{
+			return cellAtPosition(cellPosition).type;
+		}
+		
+		
 	}
 	
 	
