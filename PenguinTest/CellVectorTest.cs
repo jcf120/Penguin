@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using Penguin;
+using UnityEngine;
 
 namespace PenguinTest
 {
@@ -70,6 +71,31 @@ namespace PenguinTest
 					.rotated(new CellIndex(-2)).rotated(new CellIndex(-4)).rotated(new CellIndex( 3));
 			Assert.AreEqual(exp.i, act.i, "i: cv(55,3).rot(5).rot(1).rot(-3).rot(-2).rot(-4).rot(3) = cv(5,3)");
 			Assert.AreEqual(exp.j, act.j, "j: cv(55,3).rot(5).rot(1).rot(-3).rot(-2).rot(-4).rot(3) = cv(5,3)");
+		}
+		
+		
+		[Test()]
+		public void vec2Conversion()
+		{
+			Vector2    vec2 = Vector2.zero;
+			CellVector exp  = new CellVector(0, 0);
+			CellVector act  = new CellVector(0, 0);
+			
+			
+			// vec2(0,-0.51) -> cv(0,-1)
+			vec2.x = 0.0f; vec2.y = -0.51f;
+			exp.i  = 0;    exp.j  = -1;
+			act = CellVector.fromVector2(vec2);
+			Assert.AreEqual(exp.i, act.i, "i: vec2(0,-0.51) -> cv(0,-1)");
+			Assert.AreEqual(exp.j, act.j, "j: vec2(0,-0.51) -> cv(0,-1)");
+			
+			
+			// vec2(1.16,0) -> cv(2,-1)
+			vec2.x = 1.16f; vec2.y = 0.0f;
+			exp.i  = 2;     exp.j  = -1;
+			act = CellVector.fromVector2(vec2);
+			Assert.AreEqual(exp.i, act.i, "i: vec2(1.16,0) -> cv(2,-1)");
+			Assert.AreEqual(exp.j, act.j, "j: vec2(1.16,0) -> cv(2,-1)");
 		}
 	}
 }
