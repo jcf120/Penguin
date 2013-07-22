@@ -51,8 +51,8 @@
     <Compile Include="Cells\Patterns\SingleTypePattern.cs" />
     <Compile Include="Cells\Patterns\PatternCoordinate.cs" />
     <Compile Include="Cells\CellVector.cs" />
-    <Compile Include="Cells\Patterns\SmallHolesPattern.cs" />
     <Compile Include="DebugUtils.cs" />
+    <Compile Include="Cells\Patterns\HolesPattern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
