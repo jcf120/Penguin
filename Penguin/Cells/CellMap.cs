@@ -68,6 +68,7 @@ namespace Penguin
 		}
 		
 		
+		
 		// Mutually joins c2 at specified index of c1
 		private void linkCells(Cell c1, Cell c2, CellIndex c1index)
 		{
@@ -261,6 +262,34 @@ namespace Penguin
 				} else {
 					firstCellOfRow = firstCellOfRow[2];
 					firstPosOfRow += down + rightUp;
+				}
+			}
+		}
+		
+		
+		private bool cellsAreDeleted_ = false;
+		public void deleteCells()		
+		{
+			if (cellsAreDeleted_)
+				return;
+			cellsAreDeleted_ = true;
+			
+			Cell fisrtOfNextRow = corners_[CellIndex.topLeft];
+			while (fisrtOfNextRow!=null) {
+				
+				Cell nextCell = fisrtOfNextRow;
+				// Setup next row traversal
+				if (fisrtOfNextRow[CellIndex.bottomMiddle]!=null) {
+					fisrtOfNextRow = fisrtOfNextRow[CellIndex.bottomMiddle];
+				} else {
+					fisrtOfNextRow = fisrtOfNextRow[CellIndex.bottomRight];
+				}
+				
+				while (nextCell!=null) {
+					// delete cell
+					Cell c = nextCell;
+					nextCell = nextCell[CellIndex.topRight];
+					deleteCell(c);
 				}
 			}
 		}
