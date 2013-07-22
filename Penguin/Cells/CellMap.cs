@@ -53,7 +53,7 @@ namespace Penguin
 						Vector2 centre,
 						Dictionary<CellType, GameObject> platfromDict)
 		{
-			if (radius<1) Debug.LogError("CellMap cannot have radius below 1");
+			DebugUtils.Assert(radius>0, "CellMap cannot have radius below 1");
 			radius_       = radius;
 			cellSize_     = cellSize;
 			centre_		  = centre;
@@ -74,8 +74,8 @@ namespace Penguin
 			CellIndex c2index = c1index - 3;
 			
 			// Check links aren't already occupied
-			if (c1[c1index]!=null) Debug.LogError("Can't assign to already occupied link " + c1index + " in c1");
-			if (c2[c2index]!=null) Debug.LogError("Can't assign to already occupied link " + c1index + " in c2");
+			DebugUtils.Assert(c1[c1index]==null, "Can't assign to already occupied link " + c1index + " in c1");
+			DebugUtils.Assert(c2[c2index]==null, "Can't assign to already occupied link " + c1index + " in c2");
 			c1[c1index] = c2;
 			c2[c2index] = c1;
 		}
@@ -88,8 +88,8 @@ namespace Penguin
 			CellIndex c2index = c1index - 3;
 			
 			// Check cells aren't already unlinked
-			if (c1[c1index]!=c2) Debug.LogError("Cells aren't connected at specified index so can't be unlinked");
-			if (c2[c2index]!=c1) Debug.LogError("Cells aren't connected at specified index so can't be unlinked");
+			DebugUtils.Assert(c1[c1index]==c2, "Cells aren't connected at specified index so can't be unlinked");
+			DebugUtils.Assert(c2[c2index]==c1, "Cells aren't connected at specified index so can't be unlinked");
 			c1[c1index] = null;
 			c2[c2index] = null;
 		}
@@ -99,7 +99,7 @@ namespace Penguin
 		private bool initialCellsAreBuilt_ = false;
 		private void buildInitialCells(CellType type)
 		{
-			if (initialCellsAreBuilt_) Debug.LogError("Cells have been built once already");
+			DebugUtils.Assert(!initialCellsAreBuilt_, "Cells have been built once already");
 			initialCellsAreBuilt_ = true;
 			
 			// Start building from top-left corner
@@ -229,7 +229,10 @@ namespace Penguin
 		private bool initialCellsAreInstantiated_;
 		public void instantiateInitialCells()
 		{
-			if (initialCellsAreInstantiated_) Debug.LogError("Cells have been instantiated once already");
+			if (initialCellsAreInstantiated_) {
+				Debug.LogError("Cells have been instantiated once already");
+				return;
+			}
 			initialCellsAreInstantiated_ = true;
 			
 			// Cell traversal vectors
@@ -453,8 +456,8 @@ namespace Penguin
 		private Cell cellAtPosition(CellVector cellPosition)
 		{
 			// check bounds
-			if (cellPosition.i > radius_ || cellPosition.j > radius_)
-				Debug.LogError("Requested cell ("+cellPosition.i+", "+cellPosition.j+") outside CellMap bounds");
+			DebugUtils.Assert(cellPosition.i <= radius_ && cellPosition.j >= radius_,
+							  "Requested cell ("+cellPosition.i+", "+cellPosition.j+") outside CellMap bounds");
 			
 			// translate to bottom middle corner
 			cellPosition.j += radius_;
