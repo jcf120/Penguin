@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -456,7 +457,7 @@ namespace Penguin
 		private Cell cellAtPosition(CellVector cellPosition)
 		{
 			// check bounds
-			DebugUtils.Assert(cellPosition.i <= radius_ && cellPosition.j >= radius_,
+			DebugUtils.Assert(Math.Abs(cellPosition.i) <= radius_ && Math.Abs(cellPosition.j) <= radius_,
 							  "Requested cell ("+cellPosition.i+", "+cellPosition.j+") outside CellMap bounds");
 			
 			// translate to bottom middle corner
