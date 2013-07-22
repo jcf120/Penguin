@@ -53,6 +53,7 @@
     <Compile Include="Cells\CellVector.cs" />
     <Compile Include="DebugUtils.cs" />
     <Compile Include="Cells\Patterns\HolesPattern.cs" />
+    <Compile Include="Cells\Patterns\SinePattern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
