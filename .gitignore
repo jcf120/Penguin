@@ -228,3 +228,4 @@ pip-log.txt
 #############
 
 PenguinTest/bin/
+PenguinTest/test-results/
