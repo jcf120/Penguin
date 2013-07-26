@@ -482,11 +482,25 @@ namespace Penguin
 		}
 		
 		
+		// Range checker
+		public bool containsCellAtPosition(CellVector cellPosition)
+		{
+			if (   Math.Abs(cellPosition.i) <= radius_
+				&& Math.Abs(cellPosition.j) <= radius_
+				&& Math.Abs(cellPosition.i + cellPosition.j) <= radius_)
+				return true;
+			else
+				return false;
+		}
+		
+		
 		// Returns cells at vector relative to centre
 		private Cell cellAtPosition(CellVector cellPosition)
 		{
 			// check bounds
-			DebugUtils.Assert(Math.Abs(cellPosition.i) <= radius_ && Math.Abs(cellPosition.j) <= radius_,
+			DebugUtils.Assert(   Math.Abs(cellPosition.i) <= radius_
+							  && Math.Abs(cellPosition.j) <= radius_
+							  && Math.Abs(cellPosition.i + cellPosition.j) <= radius_,
 							  "Requested cell ("+cellPosition.i+", "+cellPosition.j+") outside CellMap bounds");
 			
 			// translate to bottom middle corner
