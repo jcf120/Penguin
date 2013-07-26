@@ -218,6 +218,22 @@ namespace PenguinTest
 			act = CellVector.fromVector2(vec2);
 			Assert.AreEqual(exp.i, act.i, "i: vec2(0.44,0.44) -> cv(1,0)");
 			Assert.AreEqual(exp.j, act.j, "j: vec2(0.44,0.44) -> cv(1,0)");
+			
+			
+			// vec2(0,10.49) -> cv(0,10)
+			vec2.x = 0.0f; vec2.y = 10.49f;
+			exp.i  = 0;    exp.j  = 10;
+			act = CellVector.fromVector2(vec2);
+			Assert.AreEqual(exp.i, act.i, "i: vec2(0,10.49) -> cv(0,10)");
+			Assert.AreEqual(exp.j, act.j, "j: vec2(0,10.49) -> cv(0,10)");
+			
+			
+			// vec2(0,-10.49) -> cv(0,-10)
+			vec2.x = 0.0f; vec2.y = -10.49f;
+			exp.i  = 0;    exp.j  = -10;
+			act = CellVector.fromVector2(vec2);
+			Assert.AreEqual(exp.i, act.i, "i: vec2(0,-10.49) -> cv(0,-10)");
+			Assert.AreEqual(exp.j, act.j, "j: vec2(0,-10.49) -> cv(0,-10)");
 		}
 	}
 }

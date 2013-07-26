@@ -125,13 +125,13 @@ namespace Penguin
 			CellVector cv = new CellVector(0, 0);
 			
 			// Affine transform for finding i
-			float x = (vec2.x * (sin60 + 1)) + (vec2.y * ((2.0f * sin60 * sin60) - (0.5f / sin60)));
+			float x = (vec2.x * 2.0f * sin60) + (vec2.y * ((2.0f * sin60 * sin60) - 0.5f));
 			float y = vec2.y - (2.0f * vec2.x * sin60);
 			
 			cv.i = (int)Math.Floor(((int)Math.Floor(x) - (int)Math.Floor(y) + 1) / 3.0f);
 			
 			// Affine transform for finding j
-			x = (2.0f * vec2.x * sin60) - (vec2.y / sin60);
+			x = (2.0f * vec2.x * sin60) - vec2.y;
 			y = vec2.y * 2.0f;
 			
 			cv.j = (int)Math.Floor(((int)Math.Floor(y) - (int)Math.Floor(x) + 1) / 3.0f);
