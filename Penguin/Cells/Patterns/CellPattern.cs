@@ -4,6 +4,9 @@ namespace Penguin
 {
 	public abstract class CellPattern
 	{
+		public CellVector origin = new CellVector(0, 0);
+		public int rows;
+		public int cols;
 		// This is how the CellMap will decide what to build
 		// Coordinates representation - wavy:
 		//   ---         ---         ---
