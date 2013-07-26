@@ -517,7 +517,7 @@ namespace Penguin
 			}
 			
 			// traverse diagonally upwards if positive i
-			if (Mathf.Abs(cellPosition.i) > 0) {
+			if (cellPosition.i > 0) {
 				for (int i=0; i<cellPosition.i; i++) {
 					c = c[CellIndex.topRight];
 					if (c==null) {
@@ -545,6 +545,18 @@ namespace Penguin
 		public CellType typeAtPosition(CellVector cellPosition)
 		{
 			return cellAtPosition(cellPosition).type;
+		}
+		
+		
+		public void setTypeAtPosition(CellType type, CellVector cellPosition)
+		{
+			Cell cell = cellAtPosition(cellPosition);
+			cell.type = type;
+			
+			// Replace platform
+			Vector3 vec = cell.platform.transform.position;
+			GameObject.Destroy(cell.platform);
+			cell.platform = (GameObject)GameObject.Instantiate(platformDict_[type], vec, Quaternion.identity);
 		}
 		
 		
