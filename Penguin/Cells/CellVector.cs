@@ -139,6 +139,13 @@ namespace Penguin
 			return cv;
 		}
 		
+		
+		// Logging
+		public override string ToString()
+		{
+			return "CellVector("+i+","+j+")";
+		}
+		
 	}
 }
 
