@@ -15,6 +15,14 @@ namespace Penguin
 		}
 		
 		
+		public PatternCoordinate(CellVector cellVector)
+		{
+			col = 0;
+			row = 0;
+			this += cellVector;
+		}
+		
+		
 		public static PatternCoordinate operator+ (PatternCoordinate pc, CellVector cv)
 		{
 			int i = Math.Abs(cv.i%2);

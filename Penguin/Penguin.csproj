@@ -55,6 +55,7 @@
     <Compile Include="Cells\Patterns\HolesPattern.cs" />
     <Compile Include="Cells\Patterns\SinePattern.cs" />
     <Compile Include="Cells\Patterns\HorizontalTripsPattern.cs" />
+    <Compile Include="Cells\Patterns\Level.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
