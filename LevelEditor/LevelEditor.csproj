@@ -40,6 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="LevelController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\Penguin\Penguin.csproj">
+      <Project>{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}</Project>
+      <Name>Penguin</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
