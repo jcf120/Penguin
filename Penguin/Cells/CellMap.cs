@@ -16,7 +16,7 @@ namespace Penguin
 		private float cellSize_;
 		
 		// Informtion for CellMap to build with 
-		private Level level_;
+		private CellPattern currentPattern_;
 		private CellIndex   patternDirection_;
 		// Displacement of CellMap's centre from current CellPattern's origin
 		CellVector patternPosition_;
@@ -52,7 +52,6 @@ namespace Penguin
 		public CellMap (int radius,
 						float cellSize,
 						Vector2 centre,
-						Level level,
 						Dictionary<CellType, GameObject> platfromDict)
 		{
 			DebugUtils.Assert(radius>0, "CellMap cannot have radius below 1");
@@ -63,7 +62,7 @@ namespace Penguin
 			buildInitialCells(CellType.Normal);
 			
 			// Setup default pattern
-			level_ = level;
+			currentPattern_   = new SingleTypePattern(CellType.Normal);
 			patternDirection_ = new CellIndex(0);
 			patternPosition_  = new CellVector(patternDirection_, radius);
 		}
@@ -305,7 +304,7 @@ namespace Penguin
 			// Convert to wavy coordinates
 			PatternCoordinate pc = new PatternCoordinate(0,0) + relPos;
 			
-			return new Cell(level_.typeAtCoor(pc));
+			return new Cell(currentPattern_.typeAtCoordinate(pc));
 		}
 		
 		
@@ -470,6 +469,16 @@ namespace Penguin
 					firstPosOfRow += down + rightUp;
 				}
 			}
+		}
+		
+		
+		// Prepare CellMap to change pattern
+		public void changePattern(CellPattern pattern, CellIndex direction)
+		{
+			// Expand this later to deal with transitions
+			patternDirection_ = direction;
+			patternPosition_  = new CellVector(direction, radius_);
+			currentPattern_   = pattern;
 		}
 		
 		
