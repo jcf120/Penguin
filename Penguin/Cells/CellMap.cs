@@ -16,10 +16,9 @@ namespace Penguin
 		private float cellSize_;
 		
 		// Informtion for CellMap to build with 
-		private CellPattern currentPattern_;
-		private CellIndex   patternDirection_;
+		private Level level_;
 		// Displacement of CellMap's centre from current CellPattern's origin
-		CellVector patternPosition_;
+		CellVector levelPosition_;
 		
 		
 		// Referenced when instaniating cells
@@ -52,19 +51,18 @@ namespace Penguin
 		public CellMap (int radius,
 						float cellSize,
 						Vector2 centre,
+						Level level,
 						Dictionary<CellType, GameObject> platfromDict)
 		{
 			DebugUtils.Assert(radius>0, "CellMap cannot have radius below 1");
-			radius_       = radius;
-			cellSize_     = cellSize;
-			centre_		  = centre;
-			platformDict_ = platfromDict;
-			buildInitialCells(CellType.Normal);
+			radius_        = radius;
+			cellSize_      = cellSize;
+			centre_		   = centre;
+			platformDict_  = platfromDict;
+			level_         = level;
+			levelPosition_ = new CellVector(0, 0);
 			
-			// Setup default pattern
-			currentPattern_   = new SingleTypePattern(CellType.Normal);
-			patternDirection_ = new CellIndex(0);
-			patternPosition_  = new CellVector(patternDirection_, radius);
+			buildInitialCells();
 		}
 		
 		
@@ -99,18 +97,23 @@ namespace Penguin
 		
 		
 		private bool initialCellsAreBuilt_ = false;
-		private void buildInitialCells(CellType type)
+		private void buildInitialCells()
 		{
 			DebugUtils.Assert(!initialCellsAreBuilt_, "Cells have been built once already");
 			initialCellsAreBuilt_ = true;
 			
+			// Starting position for level lookup
+			CellVector firstVecOfRow = new CellVector(CellIndex.topLeft, radius_);
+			
 			// Start building from top-left corner
-			corners_[CellIndex.topLeft] = new Cell(type);
+			corners_[CellIndex.topLeft] = newCellForVector(firstVecOfRow);
 			
 			// Build row diagonally upwards, linking backwards
 			Cell prev = corners_[CellIndex.topLeft];
+			CellVector cv = firstVecOfRow;
 			for (int i=0; i<radius_; i++) {
-				Cell c = new Cell(type);
+				cv += new CellVector(CellIndex.topRight, 1);
+				Cell c = newCellForVector(cv);
 				// Link bottom left corner
 				linkCells(c, prev, CellIndex.bottomLeft);
 				prev = c;
@@ -121,9 +124,12 @@ namespace Penguin
 			
 			// Build rows underneath until we reach the top-right corner
 			Cell firstOfPreviousRow = corners_[CellIndex.topLeft];
+			firstVecOfRow = firstVecOfRow += new CellVector(CellIndex.bottomMiddle, 1);
 			for (int i=0; i<radius_; i++) {
+				
 				// First cell of row
-				prev = new Cell(type);
+				cv = firstVecOfRow;
+				prev = newCellForVector(cv);
 				// Link to cell above
 				Cell abovePrev = firstOfPreviousRow;
 				linkCells(prev, abovePrev, CellIndex.topMiddle);
@@ -131,7 +137,8 @@ namespace Penguin
 				// Remaining cells in row
 				for (int j=0; j<radius_+i+1; j++) {
 					
-					Cell c = new Cell(type);
+					cv += new CellVector(CellIndex.topRight, 1);
+					Cell c = newCellForVector(cv);
 					// Link bottom left
 					linkCells(c, prev, CellIndex.bottomLeft);
 					// Link top left
@@ -146,6 +153,7 @@ namespace Penguin
 			
 				// Reference for next row iteration
 				firstOfPreviousRow = firstOfPreviousRow[3];
+				firstVecOfRow += new CellVector(CellIndex.bottomMiddle, 1);
 			}
 			
 			// Reference entry points from previous row
@@ -153,10 +161,12 @@ namespace Penguin
 			corners_[CellIndex.topRight] = prev;
 			
 			// Build rows underneath until we reach the bottom-right corner
+			firstVecOfRow += new CellVector(CellIndex.topRight, 1);
 			for (int i=radius_; i>0; i--) {
 				
 				// First cell of row
-				prev = new Cell(type);
+				cv = firstVecOfRow;
+				prev = newCellForVector(cv);
 				// Link top left corner
 				linkCells(prev, firstOfPreviousRow, CellIndex.topLeft);
 				// Link above
@@ -166,7 +176,8 @@ namespace Penguin
 				// Build remaining cells in row
 				for (int j=1; j<radius_+i; j++) {
 					
-					Cell c = new Cell(type);
+					cv += new CellVector(CellIndex.topRight, 1);
+					Cell c = newCellForVector(cv);
 					// Link bottom left
 					linkCells(c, prev, CellIndex.bottomLeft);
 					// Link top left
@@ -179,6 +190,7 @@ namespace Penguin
 				
 				// Reference for next row iteration
 				firstOfPreviousRow = firstOfPreviousRow[2];
+				firstVecOfRow += new CellVector(CellIndex.bottomRight, 1);
 			}
 			
 			// Reference entry points from final row
@@ -296,15 +308,14 @@ namespace Penguin
 		
 		
 		// Look up cell from pattern
-		private Cell cellForVector(CellVector mapVec, CellIndex spawnDir)
+		private Cell newCellForVector(CellVector mapVec)
 		{
-			// Translate and rotate into Pattern's frame
-			CellVector relPos = mapVec - patternPosition_;
-			relPos = relPos.rotated(-patternDirection_);
+			// Translate into Level's frame
+			CellVector relPos = mapVec - levelPosition_;
 			// Convert to wavy coordinates
-			PatternCoordinate pc = new PatternCoordinate(0,0) + relPos;
+			PatternCoordinate pc = new PatternCoordinate(relPos);
 			
-			return new Cell(currentPattern_.typeAtCoordinate(pc));
+			return new Cell(level_.typeAtCoor(pc));
 		}
 		
 		
@@ -316,7 +327,7 @@ namespace Penguin
 			CellVector newCornerPos = new CellVector(cornerIndex, radius_+1);
 			
 			// Build outwards
-			Cell newCorner = cellForVector(newCornerPos, cornerIndex);
+			Cell newCorner = newCellForVector(newCornerPos);
 			// Link inwards
 			linkCells(newCorner, oldCorner, cornerIndex-3);
 			// Instantiate
@@ -333,7 +344,7 @@ namespace Penguin
 				// New cells position relative to centre
 				relPos += stepVec;
 				
-				Cell c = cellForVector(relPos, cornerIndex);
+				Cell c = newCellForVector(relPos);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex+1);
 				// Link inwards
@@ -357,7 +368,7 @@ namespace Penguin
 				// New cells position relative to centre
 				relPos += stepVec;
 				
-				Cell c = cellForVector(relPos, cornerIndex);
+				Cell c = newCellForVector(relPos);
 				// Link backwards
 				linkCells(c, prevCell, cornerIndex-1);
 				// Link inwards
@@ -417,7 +428,7 @@ namespace Penguin
 			// Update centre
 			centre_ += new CellVector(direction, 1).vector2(cellSize_);
 			// Update Pattern's relative position
-			patternPosition_ -= new CellVector(direction, 1);
+			levelPosition_ -= new CellVector(direction, 1);
 			CellVector cv = new CellVector(direction-3, 1);
 		}
 		
@@ -469,16 +480,6 @@ namespace Penguin
 					firstPosOfRow += down + rightUp;
 				}
 			}
-		}
-		
-		
-		// Prepare CellMap to change pattern
-		public void changePattern(CellPattern pattern, CellIndex direction)
-		{
-			// Expand this later to deal with transitions
-			patternDirection_ = direction;
-			patternPosition_  = new CellVector(direction, radius_);
-			currentPattern_   = pattern;
 		}
 		
 		

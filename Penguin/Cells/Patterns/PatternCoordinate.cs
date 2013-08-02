@@ -39,6 +39,13 @@ namespace Penguin
 			cv.j = -cv.j;
 			return pc + cv;
 		}
+		
+		
+		// Logging
+		public override string ToString()
+		{
+			return "PatternCoordinate("+col+","+row+")";
+		}
 	}
 }
 

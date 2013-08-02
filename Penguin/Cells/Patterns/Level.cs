@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Penguin
 {
@@ -39,8 +40,9 @@ namespace Penguin
 		{	
 			// Check vertical region
 			// This search could be made more efficient, it needn't iterate over all items
+			
 			CellPattern[] pats =  patterns_.FindAll((pat) => {
-				return pat.origin.row <= coor.row && pat.origin.row + pat.rows < coor.row;
+				return (pat.origin.row <= coor.row) && (pat.origin.row + pat.rows > coor.row);
 			}).ToArray();
 			
 			// Check horizontal region
@@ -48,8 +50,9 @@ namespace Penguin
 			foreach (CellPattern pat in pats)
 			{
 				if (   pat.origin.col - pat.colsLeft  <= coor.col 
-					&& pat.origin.col + pat.colsRight >= coor.col)
+					&& pat.origin.col + pat.colsRight >= coor.col) {
 					return pat;
+				}
 			}
 			
 			// No match found

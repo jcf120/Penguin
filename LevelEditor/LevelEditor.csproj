@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Assets\LevelEditor</OutputPath>
+    <OutputPath>..\..\..\Assets\GameCodeBuild</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Assets\LevelEditor</OutputPath>
+    <OutputPath>..\..\..\Assets\GameCodeBuild</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -49,6 +49,7 @@
     <ProjectReference Include="..\Penguin\Penguin.csproj">
       <Project>{1BC728F8-52D3-4AB2-B90F-4C80094DBA1C}</Project>
       <Name>Penguin</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -8,10 +8,17 @@ namespace LevelEditor
 	{
 		
 		private Level level_;
+		public  Level level{get{return level_;}}
 		
 		public LevelController ()
 		{
 			level_ = new Level();
+			CellPattern cp = new HorizontalBreaksPattern(2,2);
+			cp.colsLeft  = 10;
+			cp.colsRight = 10;
+			cp.rows      = 20;
+			cp.origin    = new PatternCoordinate(0, 0);
+			level_.addPattern(cp);
 		}
 		
 		
