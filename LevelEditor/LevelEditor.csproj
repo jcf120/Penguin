@@ -33,9 +33,11 @@
     <Reference Include="System" />
     <Reference Include="UnityEditor">
       <HintPath>..\..\..\..\..\..\..\..\Program Files %28x86%29\Unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\..\Program Files %28x86%29\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
