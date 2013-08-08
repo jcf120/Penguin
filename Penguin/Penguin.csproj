@@ -56,9 +56,11 @@
     <Compile Include="Cells\Patterns\SinePattern.cs" />
     <Compile Include="Cells\Patterns\HorizontalTripsPattern.cs" />
     <Compile Include="Cells\Patterns\Level.cs" />
+    <Compile Include="Behaviours\LevelController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Cells\Patterns\" />
+    <Folder Include="Behaviours\" />
   </ItemGroup>
 </Project>
