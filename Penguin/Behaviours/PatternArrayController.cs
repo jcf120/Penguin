@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,46 +14,6 @@ namespace Penguin
 		public PatternArrayController ()
 		{
 			patterns = new List<CellPattern>();
-		}
-		
-		
-		// Needs changing - CellPatterns inherit from ScriptableObject, so should be instantiated here
-		public void newPattern(string patternTypeStr)
-		{
-			// Build new CellPattern as from ScriptableObject
-			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(patternTypeStr);
-			if (pattern == null) {
-				Debug.LogError("CellPattern subclass '"+patternTypeStr+"' doesn't exist");
-				return;
-			}
-			
-			// Give default size
-			pattern.colsLeft  = 5;
-			pattern.colsRight = 5;
-			pattern.rows      = 5;
-			
-			// Calculate offset (sum vertical size)
-			PatternCoordinate offset = PatternCoordinate.zero;
-			foreach (CellPattern cp in patterns) {
-				offset.row += cp.rows;
-			}
-			// col offset inherited from current end pattern
-			offset.col = patterns.Last().origin.col;
-			// Apply and append
-			pattern.origin = offset;
-			patterns.Add(pattern);
-			
-			
-			// Sort into list based row depth
-			/*patterns.Add(pattern);
-			patterns.Sort((p1, p2) => {
-				if 		(p1.origin.row == p2.origin.row)
-					return  0;
-				else if (p1.origin.row >  p2.origin.row)
-					return  1;
-				else
-					return -1;
-			});*/
 		}
 		
 		
