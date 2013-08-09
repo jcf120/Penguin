@@ -46,14 +46,14 @@
     <Compile Include="Cells\CellType.cs" />
     <Compile Include="Cells\CellIndex.cs" />
     <Compile Include="Cells\Patterns\CellPattern.cs" />
-    <Compile Include="Cells\Patterns\HorizontalBreaksPattern.cs" />
     <Compile Include="Cells\Patterns\SingleTypePattern.cs" />
     <Compile Include="Cells\Patterns\PatternCoordinate.cs" />
     <Compile Include="Cells\CellVector.cs" />
     <Compile Include="DebugUtils.cs" />
-    <Compile Include="Cells\Patterns\HolesPattern.cs" />
-    <Compile Include="Cells\Patterns\SinePattern.cs" />
     <Compile Include="Behaviours\PatternArrayController.cs" />
+    <Compile Include="Cells\Patterns\HolesPattern.cs" />
+    <Compile Include="Cells\Patterns\HorizontalBreaksPattern.cs" />
+    <Compile Include="Cells\Patterns\SinePattern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

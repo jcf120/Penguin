@@ -1,34 +1,35 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Penguin;
 
 namespace LevelEditor
 {
-	[CustomEditor (typeof (PatternArrayController))]
-	public class PatternArrayControllerEditor : Editor
+	public class PatternArrayControllerEditor : EditorWindow
 	{
 		
-		private SerializedObject   controller_;
-		private SerializedProperty patternCount_;
+		private SerializedObject  controller_;
+		private List<CellPattern> patterns_;
 		
 		
 		private string newPatType = "SingleType";
 		
-		
-		
-		private static string patternSizePath_ = "patterns.Array.size";
-		private static string patternDataPath_ = "patterns.Array.data[{0}]";
-		
 		public void OnEnable ()
 		{
-			hideFlags = HideFlags.DontSave;
-			controller_ = new SerializedObject(target);
-			patternCount_ = controller_.FindProperty(patternSizePath_);
+			
 		}
 		
 		
-		public override void OnInspectorGUI ()
+		[MenuItem("Window/Pattern Editor")]
+		public static void ShowWindow ()
+		{
+			EditorWindow.GetWindow<PatternArrayControllerEditor>();
+		}
+		
+		
+		public  void OnGUI ()
 		{
 			controller_.Update();
 			
@@ -39,34 +40,6 @@ namespace LevelEditor
 				newPattern();
 			
 			controller_.ApplyModifiedProperties();
-		}
-		
-		
-		
-		private CellPattern[] patternsArray()
-		{
-			var count = controller_.FindProperty("patterns.Array.size").intValue;
-			var array = new CellPattern[count];
-			
-			for (var i=0; i<count; i++) {
-				array[i] = controller_.FindProperty(string.Format(patternDataPath_,i)).objectReferenceValue as CellPattern;
-			}
-			
-			return array;
-		}
-		
-		
-		private void setPattern(int index,CellPattern pattern)
-		{
-			// Check array bounds, and allow growth by one element if necessary
-			if      (index > patternCount_.intValue) {
-				Debug.LogError("Cannot set pattern more than element beyond bounds (index:"+index+")");
-				return;
-			}
-			else if (index == patternCount_.intValue) {
-				patternCount_.intValue++;
-			}
-			controller_.FindProperty(string.Format(patternDataPath_,index)).objectReferenceValue = pattern;
 		}
 		
 		
@@ -87,24 +60,23 @@ namespace LevelEditor
 			
 			// Calculate offset (sum vertical size)
 			PatternCoordinate offset = PatternCoordinate.zero;
-			CellPattern[] patterns = patternsArray();
-			foreach (CellPattern cp in patterns) {
+			foreach (CellPattern cp in patterns_) {
 				Debug.Log(cp);
 			}
-			foreach (CellPattern cp in patterns) {
+			foreach (CellPattern cp in patterns_) {
 				offset.row += cp.rows;
 			}
 			// col offset inherited from current end pattern
 			// Check isn't empty first
-			if (patterns.Length > 0)
-				offset.col = patterns[patterns.Length-1].origin.col;
+			if (patterns_.Count > 0)
+				offset.col = patterns_.Last().origin.col;
 			else
 				offset.col = 0;
 			
 			// Apply and append
 			pattern.origin = offset;
-			setPattern(patternCount_.intValue, pattern);
-			Debug.Log (patternCount_.intValue);
+			patterns_.Add(pattern);
+			Debug.Log (patterns_.Count);
 		}
 		
 	}

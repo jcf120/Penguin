@@ -5,11 +5,10 @@ using UnityEngine;
 namespace Penguin
 {
 	[Serializable]
-	public class PatternArrayController: MonoBehaviour
+	public class PatternArrayController : ScriptableObject
 	{
 		
-		[SerializeField]
-		private List<CellPattern> patterns;
+		public List<CellPattern> patterns;
 		
 		public void OnEnable ()
 		{
