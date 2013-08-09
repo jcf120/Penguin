@@ -7,7 +7,7 @@ using Penguin;
 
 namespace LevelEditor
 {
-	public class PatternArrayControllerEditor : EditorWindow
+	public class PatternEditor : EditorWindow
 	{
 		
 		private SerializedObject  controller_;
@@ -18,19 +18,30 @@ namespace LevelEditor
 		
 		public void OnEnable ()
 		{
+			// Create new level if none selected
+			if (controller_ == null) {
+				ScriptableObjectUtility.CreateAsset<PatternArrayController>();
+				PatternArrayController pac = ScriptableObject.CreateInstance<PatternArrayController>();
+				controller_ = new SerializedObject(pac);
 			
+				patterns_ = pac.patterns;
+			}
 		}
 		
 		
 		[MenuItem("Window/Pattern Editor")]
 		public static void ShowWindow ()
 		{
-			EditorWindow.GetWindow<PatternArrayControllerEditor>();
+			PatternEditor pe = EditorWindow.GetWindow<PatternEditor>("Levels/Lvl1");
+			pe.title = "Pattern Editor";
 		}
 		
 		
 		public  void OnGUI ()
 		{
+			// Asset loading
+			/*EditorGUILayout.ObjectField(null, typeof(AssetsItem), false);
+			
 			controller_.Update();
 			
 			// Temp pattern type input
@@ -39,7 +50,7 @@ namespace LevelEditor
 			if (GUILayout.Button("New Pattern"))
 				newPattern();
 			
-			controller_.ApplyModifiedProperties();
+			controller_.ApplyModifiedProperties();*/
 		}
 		
 		
