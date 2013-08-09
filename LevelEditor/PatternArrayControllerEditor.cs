@@ -12,7 +12,7 @@ namespace LevelEditor
 		private SerializedObject   patternArrayController_;
 		
 		
-		private string newPatType = "Normal";
+		private string newPatType = "SingleType";
 		
 		void OnEnable ()
 		{
@@ -29,6 +29,8 @@ namespace LevelEditor
 			
 			if (GUILayout.Button("New Pattern"))
 				newPattern();
+			
+			patternArrayController_.ApplyModifiedProperties();
 		}
 		
 		
@@ -51,6 +53,15 @@ namespace LevelEditor
 		
 		private void setPattern(int index,CellPattern pattern)
 		{
+			int size = patternsArray().Length;
+			// Check array bounds, and allow growth by one element if necessary
+			if      (index > size) {
+				Debug.LogError("Cannot set pattern more than element beyond bounds (index:"+index+")");
+				return;
+			}
+			else if (index == size) {
+				patternArrayController_.FindProperty("patterns").InsertArrayElementAtIndex(index);
+			}
 			patternArrayController_.FindProperty(string.Format(arrayDataStr, index)).objectReferenceValue = pattern;
 		}
 		
@@ -58,7 +69,7 @@ namespace LevelEditor
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
-			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType);
+			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType+"Pattern");
 			if (pattern == null) {
 				Debug.LogError("CellPattern subclass '"+newPatType+"' doesn't exist");
 				return;
@@ -84,7 +95,9 @@ namespace LevelEditor
 			
 			// Apply and append
 			pattern.origin = offset;
+			Debug.Log (patternsArray().Length);
 			setPattern(patterns.Length, pattern);
+			Debug.Log (patternsArray().Length);
 		}
 		
 	}
