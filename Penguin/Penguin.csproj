@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Cells\Cell.cs" />
-    <Compile Include="Cells\CellMap.cs" />
     <Compile Include="Cells\CellType.cs" />
     <Compile Include="Cells\CellIndex.cs" />
     <Compile Include="Cells\Patterns\CellPattern.cs" />
@@ -54,9 +53,7 @@
     <Compile Include="DebugUtils.cs" />
     <Compile Include="Cells\Patterns\HolesPattern.cs" />
     <Compile Include="Cells\Patterns\SinePattern.cs" />
-    <Compile Include="Cells\Patterns\HorizontalTripsPattern.cs" />
-    <Compile Include="Cells\Patterns\Level.cs" />
-    <Compile Include="Behaviours\LevelController.cs" />
+    <Compile Include="Behaviours\PatternArrayController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,18 +1,19 @@
 using System;
+using UnityEngine;
 
 namespace Penguin
 {
+	[Serializable]
 	public class HorizontalBreaksPattern : CellPattern
 	{
 		
 		// Our algorithm parameters
-		private int breakSize_;
-		private int intervalSize_;
+		public int breakSize;
+		public int intervalSize;
 		
-		public HorizontalBreaksPattern (int breakSize, int intervalSize)
+		public HorizontalBreaksPattern ()
 		{
-			breakSize_    = breakSize;
-			intervalSize_ = intervalSize;
+			
 		}
 		
 		
@@ -22,7 +23,7 @@ namespace Penguin
 			// Column is ignored, only interested in row
 			
 			// Length of repeating pattern segment
-			int segmentLength = breakSize_ + intervalSize_;
+			int segmentLength = breakSize + intervalSize;
 			
 			// Determine relative index to repeating segment
 			// Can't use modulo, as index isn't guaranteed positive
@@ -30,7 +31,7 @@ namespace Penguin
 			while (coor.row > segmentLength) coor.row -= segmentLength;
 			
 			// Choose cell type
-			if (coor.row < intervalSize_)
+			if (coor.row < intervalSize)
 				return CellType.Normal;
 			else
 				return CellType.Empty;

@@ -2,32 +2,31 @@ using System;
 
 namespace Penguin
 {
+	[Serializable]
 	public class HolesPattern : CellPattern
 	{
-		private int size_;
-		private int separation_;
+		public int size;
+		public int separation;
 		
-		public HolesPattern (int size, int separation)
+		public HolesPattern ()
 		{
-			size_     = size;
-			separation_ = separation;
 		}
 		
 		
 		public override CellType typeAtCoordinate (PatternCoordinate coor)
 		{
 			// add diagonal displacement
-			coor.col += coor.row / separation_;
+			coor.col += coor.row / separation;
 			
-			int sectorSize = size_ + separation_;
+			int sectorSize = size + separation;
 			
 			// Inside column hole?
 			coor.col = Math.Abs (coor.col) % sectorSize;
-			if (coor.col < size_) {
+			if (coor.col < size) {
 				
 				// Inside row hole?
 				coor.row = Math.Abs (coor.row) % sectorSize;
-				if (coor.row < size_)
+				if (coor.row < size)
 					return CellType.Empty;
 			}
 			

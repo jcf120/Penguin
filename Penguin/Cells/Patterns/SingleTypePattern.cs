@@ -2,18 +2,19 @@ using System;
 
 namespace Penguin
 {
+	[Serializable]
 	public class SingleTypePattern : CellPattern
 	{
-		private CellType type_;
+		public CellType type;
 		
-		public SingleTypePattern (CellType type)
+		public SingleTypePattern ()
 		{
-			type_ = type;
+			
 		}
 		
 		public override CellType typeAtCoordinate(PatternCoordinate coor)
 		{
-			return type_;
+			return type;
 		}
 	}
 }

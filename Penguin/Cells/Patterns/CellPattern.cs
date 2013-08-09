@@ -1,10 +1,11 @@
 using System;
+using UnityEngine;
 
 namespace Penguin
 {
-	public abstract class CellPattern
+	public abstract class CellPattern : ScriptableObject
 	{
-		public PatternCoordinate origin = new PatternCoordinate(0, 0);
+		public PatternCoordinate origin;
 		public int rows;
 		public int colsLeft;
 		public int colsRight;
