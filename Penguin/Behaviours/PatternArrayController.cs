@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace Penguin
 {
-	
+	[Serializable]
 	public class PatternArrayController: MonoBehaviour
 	{
 		
 		[SerializeField]
 		private List<CellPattern> patterns;
 		
-		public PatternArrayController ()
+		public void OnEnable ()
 		{
-			patterns = new List<CellPattern>();
+			hideFlags = HideFlags.HideAndDontSave;
 		}
 		
 		
 		public void removePattern(CellPattern pattern)
 		{
-			patterns.Remove(pattern);
+			//patterns.Remove(pattern);
 		}
 		
 		
@@ -28,7 +28,7 @@ namespace Penguin
 			// Check vertical region
 			// This search could be made more efficient, it needn't iterate over all items
 			
-			CellPattern[] pats =  patterns.FindAll((pat) => {
+			/*CellPattern[] pats =  patterns.FindAll((pat) => {
 				return (pat.origin.row <= coor.row) && (pat.origin.row + pat.rows > coor.row);
 			}).ToArray();
 			
@@ -40,7 +40,7 @@ namespace Penguin
 					&& pat.origin.col + pat.colsRight >= coor.col) {
 					return pat;
 				}
-			}
+			}*/
 			
 			// No match found
 			return null;

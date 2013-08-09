@@ -7,11 +7,6 @@ namespace Penguin
 	{
 		public CellType type;
 		
-		public SingleTypePattern ()
-		{
-			
-		}
-		
 		public override CellType typeAtCoordinate(PatternCoordinate coor)
 		{
 			return type;

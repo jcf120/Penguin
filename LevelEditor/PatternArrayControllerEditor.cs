@@ -9,20 +9,28 @@ namespace LevelEditor
 	public class PatternArrayControllerEditor : Editor
 	{
 		
-		private SerializedObject   patternArrayController_;
+		private SerializedObject   controller_;
+		private SerializedProperty patternCount_;
 		
 		
 		private string newPatType = "SingleType";
 		
-		void OnEnable ()
+		
+		
+		private static string patternSizePath_ = "patterns.Array.size";
+		private static string patternDataPath_ = "patterns.Array.data[{0}]";
+		
+		public void OnEnable ()
 		{
-			patternArrayController_ = new SerializedObject(target);
+			hideFlags = HideFlags.DontSave;
+			controller_ = new SerializedObject(target);
+			patternCount_ = controller_.FindProperty(patternSizePath_);
 		}
 		
 		
 		public override void OnInspectorGUI ()
 		{
-			patternArrayController_.Update();
+			controller_.Update();
 			
 			// Temp pattern type input
 			newPatType = EditorGUILayout.TextField(newPatType);
@@ -30,21 +38,18 @@ namespace LevelEditor
 			if (GUILayout.Button("New Pattern"))
 				newPattern();
 			
-			patternArrayController_.ApplyModifiedProperties();
+			controller_.ApplyModifiedProperties();
 		}
 		
-		
-		private static string arraySizeStr = "patterns.Array.size";
-		private static string arrayDataStr = "patterns.Array.data[{0}]";
 		
 		
 		private CellPattern[] patternsArray()
 		{
-			var count = patternArrayController_.FindProperty(arraySizeStr).intValue;
+			var count = controller_.FindProperty("patterns.Array.size").intValue;
 			var array = new CellPattern[count];
 			
 			for (var i=0; i<count; i++) {
-				array[i] = patternArrayController_.FindProperty(string.Format(arrayDataStr,i)).objectReferenceValue as CellPattern;
+				array[i] = controller_.FindProperty(string.Format(patternDataPath_,i)).objectReferenceValue as CellPattern;
 			}
 			
 			return array;
@@ -53,23 +58,23 @@ namespace LevelEditor
 		
 		private void setPattern(int index,CellPattern pattern)
 		{
-			int size = patternsArray().Length;
 			// Check array bounds, and allow growth by one element if necessary
-			if      (index > size) {
+			if      (index > patternCount_.intValue) {
 				Debug.LogError("Cannot set pattern more than element beyond bounds (index:"+index+")");
 				return;
 			}
-			else if (index == size) {
-				patternArrayController_.FindProperty("patterns").InsertArrayElementAtIndex(index);
+			else if (index == patternCount_.intValue) {
+				patternCount_.intValue++;
 			}
-			patternArrayController_.FindProperty(string.Format(arrayDataStr, index)).objectReferenceValue = pattern;
+			controller_.FindProperty(string.Format(patternDataPath_,index)).objectReferenceValue = pattern;
 		}
 		
 		
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
-			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType+"Pattern");
+			//CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType+"Pattern");
+			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance<SingleTypePattern>();
 			if (pattern == null) {
 				Debug.LogError("CellPattern subclass '"+newPatType+"' doesn't exist");
 				return;
@@ -84,6 +89,9 @@ namespace LevelEditor
 			PatternCoordinate offset = PatternCoordinate.zero;
 			CellPattern[] patterns = patternsArray();
 			foreach (CellPattern cp in patterns) {
+				Debug.Log(cp);
+			}
+			foreach (CellPattern cp in patterns) {
 				offset.row += cp.rows;
 			}
 			// col offset inherited from current end pattern
@@ -95,9 +103,8 @@ namespace LevelEditor
 			
 			// Apply and append
 			pattern.origin = offset;
-			Debug.Log (patternsArray().Length);
-			setPattern(patterns.Length, pattern);
-			Debug.Log (patternsArray().Length);
+			setPattern(patternCount_.intValue, pattern);
+			Debug.Log (patternCount_.intValue);
 		}
 		
 	}
