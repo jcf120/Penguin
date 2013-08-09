@@ -7,6 +7,8 @@ namespace Penguin
 		public int col;
 		public int row;
 		
+		public readonly static PatternCoordinate zero = new PatternCoordinate(0,0);
+		
 		
 		public PatternCoordinate(int c, int r)
 		{
