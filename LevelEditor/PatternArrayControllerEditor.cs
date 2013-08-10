@@ -93,11 +93,40 @@ namespace LevelEditor
 		
 		private void save()
 		{
-			string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/"+title_.stringValue+".asset");
-			AssetDatabase.CreateAsset(controller_.targetObject, path);
-			AssetDatabase.SaveAssets();
+			var data = MiniJSON.Json.Deserialize(controllerToJson());
+			Debug.Log (data);
 		}
-
+		
+		
+		private string controllerToJson()
+		{
+			string json = "{";
+			
+			json += "\"title\":\"" + title_.stringValue + "\",";
+			
+			CellPattern[] patterns = patternsArray();
+			json += "\"patterns\":[";
+			for (int i=0; i<patterns.Length; i++) {
+				json += patternToJson(patterns[i]);
+				if (i<patterns.Length-1)
+					json += ",";
+			}
+			json += "]";
+			
+			json += "}";
+			
+			return json;
+		}
+		
+		
+		private string patternToJson(CellPattern pat)
+		{
+			string json = "{";
+			json += "\"class\":\"" + pat.GetType().ToString() + "\"";
+			json += "}";
+			
+			return json;
+		}
 
 
 		private CellPattern[] patternsArray()

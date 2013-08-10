@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Penguin
 {
-	[Serializable]
 	public class PatternArrayController : ScriptableObject
 	{
 		

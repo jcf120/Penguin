@@ -31,8 +31,6 @@ namespace Penguin
 		//   ---         ---         ---
 		// coordinate (0, 0) is the pattern's ideal entry point
 		public abstract CellType typeAtCoordinate(PatternCoordinate coor);
-		// For Serialization:
-		public void OnEnable () {hideFlags = HideFlags.HideInInspector;}
 	}
 }
 

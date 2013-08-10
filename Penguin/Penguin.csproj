@@ -45,21 +45,19 @@
     <Compile Include="Cells\Cell.cs" />
     <Compile Include="Cells\CellType.cs" />
     <Compile Include="Cells\CellIndex.cs" />
-    <Compile Include="Cells\Patterns\CellPattern.cs" />
-    <Compile Include="Cells\Patterns\SingleTypePattern.cs" />
-    <Compile Include="Cells\Patterns\PatternCoordinate.cs" />
     <Compile Include="Cells\CellVector.cs" />
-    <Compile Include="DebugUtils.cs" />
-    <Compile Include="Behaviours\PatternArrayController.cs" />
-    <Compile Include="Cells\Patterns\HolesPattern.cs" />
-    <Compile Include="Cells\Patterns\HorizontalBreaksPattern.cs" />
-    <Compile Include="Cells\Patterns\SinePattern.cs" />
-    <Compile Include="MiniJSON.cs" />
+    <Compile Include="Utilities\DebugUtils.cs" />
+    <Compile Include="Patterns\CellPattern.cs" />
+    <Compile Include="Patterns\HolesPattern.cs" />
+    <Compile Include="Patterns\HorizontalBreaksPattern.cs" />
+    <Compile Include="Patterns\PatternArrayController.cs" />
+    <Compile Include="Patterns\PatternCoordinate.cs" />
+    <Compile Include="Patterns\SinePattern.cs" />
+    <Compile Include="Patterns\SingleTypePattern.cs" />
+    <Compile Include="Utilities\MiniJSON.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Cells\Patterns\" />
     <Folder Include="Behaviours\" />
-    <Folder Include="New Folder\" />
   </ItemGroup>
 </Project>
