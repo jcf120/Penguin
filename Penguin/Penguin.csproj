@@ -54,10 +54,12 @@
     <Compile Include="Cells\Patterns\HolesPattern.cs" />
     <Compile Include="Cells\Patterns\HorizontalBreaksPattern.cs" />
     <Compile Include="Cells\Patterns\SinePattern.cs" />
+    <Compile Include="MiniJSON.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Cells\Patterns\" />
     <Folder Include="Behaviours\" />
+    <Folder Include="New Folder\" />
   </ItemGroup>
 </Project>

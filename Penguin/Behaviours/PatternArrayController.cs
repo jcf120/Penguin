@@ -8,11 +8,16 @@ namespace Penguin
 	public class PatternArrayController : ScriptableObject
 	{
 		
+		public string title = "untitled";
 		public List<CellPattern> patterns;
+		
 		
 		public void OnEnable ()
 		{
-			hideFlags = HideFlags.HideAndDontSave;
+			if (patterns == null)
+				patterns = new List<CellPattern>();
+			
+			hideFlags = HideFlags.HideInInspector;
 		}
 		
 		

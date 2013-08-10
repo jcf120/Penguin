@@ -9,85 +9,159 @@ namespace LevelEditor
 {
 	public class PatternEditor : EditorWindow
 	{
+		[MenuItem("Window/Pattern Editor")]
+		public static void ShowWindow ()
+		{
+			var window = GetWindow<PatternEditor>();
+			window.title = "Pattern Editor";
+		}
 		
-		private SerializedObject  controller_;
-		private List<CellPattern> patterns_;
+		
+		// Serialized data
+		private SerializedObject   controller_;
+		private SerializedProperty title_;
+		private SerializedProperty patternCount_;
 		
 		
-		private string newPatType = "SingleType";
+		// Serialized property paths
+		private static string patternSizePath_ = "patterns.Array.size";
+		private static string patternDataPath_ = "patterns.Array.data[{0}]";
 		
+		
+		// Interface data
+		private string newPatType_ = "SingleType";
+		private PatternArrayController controllerToLoad_;
+		
+		
+		// Instead of instantiation
 		public void OnEnable ()
 		{
 			// Create new level if none selected
 			if (controller_ == null) {
-				ScriptableObjectUtility.CreateAsset<PatternArrayController>();
 				PatternArrayController pac = ScriptableObject.CreateInstance<PatternArrayController>();
-				controller_ = new SerializedObject(pac);
-			
-				patterns_ = pac.patterns;
+				setController(pac);
 			}
-		}
-		
-		
-		[MenuItem("Window/Pattern Editor")]
-		public static void ShowWindow ()
-		{
-			PatternEditor pe = EditorWindow.GetWindow<PatternEditor>("Levels/Lvl1");
-			pe.title = "Pattern Editor";
 		}
 		
 		
 		public  void OnGUI ()
 		{
 			// Asset loading
-			/*EditorGUILayout.ObjectField(null, typeof(AssetsItem), false);
+			EditorGUILayout.BeginHorizontal();
+			controllerToLoad_ = EditorGUILayout.ObjectField(controllerToLoad_, typeof(PatternArrayController), true) as PatternArrayController;
+			var oldEnabled = GUI.enabled; // state-machine housekeeping
+			GUI.enabled = controllerToLoad_!=null ? true : false;
+			if (GUILayout.Button("Load"))
+				setController(controllerToLoad_);
+			GUI.enabled = oldEnabled;
+			EditorGUILayout.EndHorizontal();
 			
 			controller_.Update();
 			
+			title_.stringValue = EditorGUILayout.TextField("Title", title_.stringValue);
+			
+			if (canSave() && GUILayout.Button("Save"))
+					save();
+			
 			// Temp pattern type input
-			newPatType = EditorGUILayout.TextField(newPatType);
+			newPatType_ = EditorGUILayout.TextField(newPatType_);
 			
 			if (GUILayout.Button("New Pattern"))
 				newPattern();
 			
-			controller_.ApplyModifiedProperties();*/
+			controller_.ApplyModifiedProperties();
 		}
 		
 		
+		private void setController(PatternArrayController pac)
+		{
+			controller_ = new SerializedObject(pac);
+				
+			patternCount_ = controller_.FindProperty(patternSizePath_);
+			title_ = controller_.FindProperty("title");
+		}
+		
+		
+		private bool canSave()
+		{
+			if (controller_ == null)
+				return false;
+			
+			return true;
+		}
+		
+		
+		private void save()
+		{
+			string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/"+title_.stringValue+".asset");
+			AssetDatabase.CreateAsset(controller_.targetObject, path);
+			AssetDatabase.SaveAssets();
+		}
+
+
+
+		private CellPattern[] patternsArray()
+		{
+			var count = controller_.FindProperty("patterns.Array.size").intValue;
+			var array = new CellPattern[count];
+
+			for (var i=0; i<count; i++) {
+				array[i] = controller_.FindProperty(string.Format(patternDataPath_,i)).objectReferenceValue as CellPattern;
+			}
+
+			return array;
+		}
+
+
+		private void setPattern(int index,CellPattern pattern)
+		{
+			// Check array bounds, and allow growth by one element if necessary
+			if      (index > patternCount_.intValue) {
+				Debug.LogError("Cannot set pattern more than element beyond bounds (index:"+index+")");
+				return;
+			}
+			else if (index == patternCount_.intValue) {
+				patternCount_.intValue++;
+			}
+			controller_.FindProperty(string.Format(patternDataPath_,index)).objectReferenceValue = pattern;
+		}
+
+
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
 			//CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType+"Pattern");
 			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance<SingleTypePattern>();
 			if (pattern == null) {
-				Debug.LogError("CellPattern subclass '"+newPatType+"' doesn't exist");
+				Debug.LogError("CellPattern subclass '"+newPatType_+"' doesn't exist");
 				return;
 			}
-			
+
 			// Give default size
 			pattern.colsLeft  = 5;
 			pattern.colsRight = 5;
 			pattern.rows      = 5;
-			
+
 			// Calculate offset (sum vertical size)
 			PatternCoordinate offset = PatternCoordinate.zero;
-			foreach (CellPattern cp in patterns_) {
+			CellPattern[] patterns = patternsArray();
+			foreach (CellPattern cp in patterns) {
 				Debug.Log(cp);
 			}
-			foreach (CellPattern cp in patterns_) {
+			foreach (CellPattern cp in patterns) {
 				offset.row += cp.rows;
 			}
 			// col offset inherited from current end pattern
 			// Check isn't empty first
-			if (patterns_.Count > 0)
-				offset.col = patterns_.Last().origin.col;
+			if (patterns.Length > 0)
+				offset.col = patterns[patterns.Length-1].origin.col;
 			else
 				offset.col = 0;
-			
+
 			// Apply and append
 			pattern.origin = offset;
-			patterns_.Add(pattern);
-			Debug.Log (patterns_.Count);
+			setPattern(patternCount_.intValue, pattern);
+			Debug.Log (patternCount_.intValue);
 		}
 		
 	}
