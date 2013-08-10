@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using Penguin;
@@ -93,39 +95,46 @@ namespace LevelEditor
 		
 		private void save()
 		{
-			var data = MiniJSON.Json.Deserialize(controllerToJson());
-			Debug.Log (data);
+			string json = MiniJSON.Json.Serialize(controllerToDict());
+			Debug.Log (json);
 		}
 		
 		
-		private string controllerToJson()
+		private Dictionary<string,object> controllerToDict()
 		{
-			string json = "{";
+			Dictionary<string,object> data = new Dictionary<string, object>();
 			
-			json += "\"title\":\"" + title_.stringValue + "\",";
+			data["title"] = title_.stringValue;
 			
 			CellPattern[] patterns = patternsArray();
-			json += "\"patterns\":[";
-			for (int i=0; i<patterns.Length; i++) {
-				json += patternToJson(patterns[i]);
-				if (i<patterns.Length-1)
-					json += ",";
+			ArrayList patsData = new ArrayList();
+			foreach (CellPattern pat in patterns) {
+				patsData.Add(patternToDict(pat));
 			}
-			json += "]";
+			data["patterns"] = patsData;
 			
-			json += "}";
-			
-			return json;
+			return data;
 		}
 		
 		
-		private string patternToJson(CellPattern pat)
+		private Dictionary<string,object> patternToDict(CellPattern pat)
 		{
-			string json = "{";
-			json += "\"class\":\"" + pat.GetType().ToString() + "\"";
-			json += "}";
+			Dictionary<string,object> data = new Dictionary<string, object>();
 			
-			return json;
+			// Common CellPattern data
+			data["class"    ] = pat.GetType().ToString();
+			data["originCol"] = pat.origin.col;
+			data["originRow"] = pat.origin.row;
+			data["colsLeft" ] = pat.colsLeft;
+			data["colsRight"] = pat.colsRight;
+			data["rows"     ] = pat.rows;
+			
+			// Subclass specific data
+			if (pat.GetType() == typeof(SingleTypePattern)) {
+				data["type"] = ((SingleTypePattern)pat).type;
+			}
+			
+			return data;
 		}
 
 
