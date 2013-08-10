@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Penguin
@@ -31,6 +32,32 @@ namespace Penguin
 		//   ---         ---         ---
 		// coordinate (0, 0) is the pattern's ideal entry point
 		public abstract CellType typeAtCoordinate(PatternCoordinate coor);
+		
+		// json serialisation bridge methods
+		
+		public Dictionary<string,object> packDict()
+		{
+			Dictionary<string,object> data = new Dictionary<string, object>();
+			
+			data["class"    ] = GetType().ToString();
+			data["originCol"] = origin.col;
+			data["originRow"] = origin.row;
+			data["colsLeft" ] = colsLeft;
+			data["colsRight"] = colsRight;
+			data["rows"     ] = rows;
+			
+			return data;
+		}
+		
+		
+		public void unpackDict(Dictionary<string,object> data)
+		{
+			origin.col = (int)data["originCol"];
+			origin.row = (int)data["originRow"];
+			colsLeft   = (int)data["colsLeft" ];
+			colsRight  = (int)data["colsRight"];
+			rows       = (int)data["rows"     ];
+		}
 	}
 }
 
