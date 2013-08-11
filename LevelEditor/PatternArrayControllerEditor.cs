@@ -169,8 +169,7 @@ namespace LevelEditor
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
-			//CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType+"Pattern");
-			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance<SingleTypePattern>();
+			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType_+"Pattern");
 			if (pattern == null) {
 				Debug.LogError("CellPattern subclass '"+newPatType_+"' doesn't exist");
 				return;
@@ -180,9 +179,6 @@ namespace LevelEditor
 			pattern.colsLeft  = 5;
 			pattern.colsRight = 5;
 			pattern.rows      = 5;
-			
-			// Temp set cell type
-			((SingleTypePattern)pattern).cellType = CellType.Normal;
 
 			// Calculate offset (sum vertical size)
 			PatternCoordinate offset = PatternCoordinate.zero;
