@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Penguin
 {
@@ -8,8 +9,23 @@ namespace Penguin
 		public int size;
 		public int separation;
 		
-		public HolesPattern ()
+		public override Dictionary<string, object> packDict ()
 		{
+			Dictionary<string, object> data = base.packDict ();
+			
+			data["size"      ] = size;
+			data["separation"] = separation;
+			
+			return data;
+		}
+		
+		
+		public override void unpackDict (Dictionary<string, object> data)
+		{
+			base.unpackDict (data);
+			
+			size       = (int)data["size"      ];
+			separation = (int)data["separation"];
 		}
 		
 		

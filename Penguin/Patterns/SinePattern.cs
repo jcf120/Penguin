@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Penguin
 {
@@ -9,9 +10,25 @@ namespace Penguin
 		public float wavelength;
 		public int   width;
 		
-		public SinePattern ()
+		public override Dictionary<string, object> packDict ()
 		{
+			Dictionary<string, object> data = base.packDict ();
 			
+			data["amplitude" ] = amplitude;
+			data["wavelength"] = wavelength;
+			data["width"     ] = width;
+			
+			return data;
+		}
+		
+		
+		public override void unpackDict (Dictionary<string, object> data)
+		{
+			base.unpackDict (data);
+			
+			amplitude  = (float)data["amplitude"];
+			wavelength = (float)data["wavelength"];
+			width      = (int  )data["width"];
 		}
 		
 		

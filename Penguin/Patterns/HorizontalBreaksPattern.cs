@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Penguin
@@ -11,9 +12,23 @@ namespace Penguin
 		public int breakSize;
 		public int intervalSize;
 		
-		public HorizontalBreaksPattern ()
+		public override Dictionary<string, object> packDict ()
 		{
+			Dictionary<string, object> data = base.packDict ();
 			
+			data["breakSize"   ] = breakSize;
+			data["intervalSize"] = intervalSize;
+			
+			return data;
+		}
+		
+		
+		public override void unpackDict (Dictionary<string, object> data)
+		{
+			base.unpackDict (data);
+			
+			breakSize    = (int)data["breakSize"];
+			intervalSize = (int)data["intervalSize"];
 		}
 		
 		
