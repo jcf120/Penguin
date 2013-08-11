@@ -30,7 +30,6 @@ namespace Penguin
 		
 		public void unpackDict (Dictionary<string, object> data)
 		{
-			Debug.Log (data["title"]);
 			title = (string)data["title"];
 			
 			// Check pattern list hasn't already been filled
@@ -38,9 +37,8 @@ namespace Penguin
 				Debug.LogError("PatternArrayController unpacking failed - patterns List already filled.");
 				return;
 			}
-			Debug.Log (data["patterns"]);
+			
 			List<object> patDatas = data["patterns"] as List<object>;
-			Debug.Log (patDatas[0]);
 			foreach (Dictionary<string, object> patData in patDatas) {
 				
 				// Determine CellPattern subclass and instantiate
@@ -53,6 +51,7 @@ namespace Penguin
 				
 				CellPattern pat = ScriptableObject.CreateInstance(Type.GetType(typeStr)) as CellPattern;
 				pat.unpackDict(patData);
+				patterns.Add(pat);
 			}
 				
 		}
