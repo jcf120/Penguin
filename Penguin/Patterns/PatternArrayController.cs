@@ -8,7 +8,6 @@ namespace Penguin
 	public class PatternArrayController : ScriptableObject
 	{
 		
-		public string title = "untitled";
 		public List<CellPattern> patterns;
 		
 		
@@ -17,7 +16,6 @@ namespace Penguin
 			Dictionary<string, object> data = new Dictionary<string, object>();
 			
 			data["class"] = GetType().ToString();
-			data["title"] = title;
 			
 			ArrayList patsData = new ArrayList();
 			foreach (CellPattern pat in patterns) {
@@ -31,7 +29,6 @@ namespace Penguin
 		
 		public void unpackDict (Dictionary<string, object> data)
 		{
-			title = (string)data["title"];
 			
 			// Check pattern list hasn't already been filled
 			if (patterns.Count > 0) {

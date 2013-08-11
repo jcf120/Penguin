@@ -19,10 +19,10 @@ namespace LevelEditor
 			window.title = "Pattern Editor";
 		}
 		
+		private string title_ = "untitled";
 		
 		// Serialized data
 		private SerializedObject   controller_;
-		private SerializedProperty title_;
 		private SerializedProperty patternCount_;
 		
 		
@@ -87,7 +87,7 @@ namespace LevelEditor
 		private void savingGUI()
 		{
 			EditorGUILayout.BeginHorizontal();
-			title_.stringValue = EditorGUILayout.TextField(title_.stringValue);
+			title_ = EditorGUILayout.TextField(title_);
 			
 			if (canSave() && GUILayout.Button("Save"))
 					save();
@@ -184,7 +184,6 @@ namespace LevelEditor
 			controller_ = new SerializedObject(pac);
 				
 			patternCount_ = controller_.FindProperty(patternSizePath_);
-			title_ = controller_.FindProperty("title");
 		}
 		
 		
@@ -199,12 +198,23 @@ namespace LevelEditor
 		
 		private void save()
 		{
+			// Check if file already exists
+			string path = "Assets/Levels/" + title_ + ".txt";
+			if (File.Exists(path)) {
+				if (!EditorUtility.DisplayDialog("Pattern Editor - Warning",
+												 "Are you sure you want to save over "+title_+"?",
+												 "Save",
+												 "Cancel")) {
+					// Cancel save
+					return;
+				}
+			}
+			
 			// Convert structure to json
 			PatternArrayController pac = (PatternArrayController)controller_.targetObject;
 			string json = MiniJSON.Json.Serialize(pac.packDict());
 			
 			// Create asset
-			string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/" + title_.stringValue + ".txt");
 			File.WriteAllText(path, json);
 			AssetDatabase.Refresh();
 		}
@@ -216,8 +226,7 @@ namespace LevelEditor
 			if (!EditorUtility.DisplayDialog("Pattern Editor - Warning",
 											 "Continuing to load will scrap the current level",
 											 "Load",
-											 "Cancel"))
-			{
+											 "Cancel")) {
 				// Cancel load
 				return;
 			}
