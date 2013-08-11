@@ -19,11 +19,6 @@ namespace LevelEditor
 		
 		public virtual void setTarget(CellPattern pattern)
 		{
-			if (!doesInspectPattern(pattern.GetType())) {
-				Debug.LogError("Inspector can't inspect type '"+pattern.GetType().ToString()+"'.");
-				return;
-			}
-			
 			serializedTarget_ = new SerializedObject(pattern);
 			
 			originCol_ = serializedTarget_.FindProperty("originCol");

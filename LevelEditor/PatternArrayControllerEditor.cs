@@ -32,11 +32,15 @@ namespace LevelEditor
 		
 		
 		// Interface data
-		private string    newPatType_ = "SingleType";
+		
+		// Loading GUI
 		private TextAsset assetToLoad_;
 		// List GUI
 		private Vector2 patListScrollPos_;
 		private int     selectedPatIndex_ = -1;
+		// New Pattern GUI
+		string[] patternClassNames_;
+		int      selectedClass_ = 0;
 		// Pattern Inspector GUI
 		private bool                 isInspectorVisible_ = true;
 		private CellPatternInspector patInspector_;
@@ -50,6 +54,10 @@ namespace LevelEditor
 				PatternArrayController pac = ScriptableObject.CreateInstance<PatternArrayController>();
 				setController(pac);
 			}
+			
+			// Populate CellPattern subclass list
+			var subclasses = typeof(CellPattern).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(CellPattern)));
+			patternClassNames_ = (from sc in subclasses select sc.Name).ToArray();
 		}
 		
 		
@@ -122,7 +130,7 @@ namespace LevelEditor
 		private void newPatternGUI()
 		{
 			EditorGUILayout.BeginHorizontal();
-			newPatType_ = EditorGUILayout.TextField(newPatType_);
+			selectedClass_ = EditorGUILayout.Popup(selectedClass_,patternClassNames_);
 			
 			if (GUILayout.Button("Add"))
 				newPattern();
@@ -284,13 +292,10 @@ namespace LevelEditor
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
-			if (newPatType_ == "Cell") {
-				Debug.LogError("Can't instantiate abstract class CellPattern");
-				return;
-			}
-			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType_+"Pattern");
+			string newPatType = patternClassNames_[selectedClass_];
+			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType);
 			if (pattern == null) {
-				Debug.LogError("CellPattern subclass '"+newPatType_+"' doesn't exist");
+				Debug.LogError("CellPattern subclass '"+newPatType+"' doesn't exist");
 				return;
 			}
 
