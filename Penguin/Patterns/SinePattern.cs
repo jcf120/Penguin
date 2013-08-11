@@ -26,9 +26,9 @@ namespace Penguin
 		{
 			base.unpackDict (data);
 			
-			amplitude  = (float)data["amplitude"];
-			wavelength = (float)data["wavelength"];
-			width      = Convert.ToInt32(data["width"]);
+			amplitude  = Convert.ToSingle(data["amplitude" ]);
+			wavelength = Convert.ToSingle(data["wavelength"]);
+			width      = Convert.ToInt32 (data["width"     ]);
 		}
 		
 		
