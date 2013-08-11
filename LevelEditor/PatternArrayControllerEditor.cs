@@ -226,6 +226,12 @@ namespace LevelEditor
 			PatternArrayController pac = ScriptableObject.CreateInstance<PatternArrayController>() as PatternArrayController;
 			string json = assetToLoad_.text;
 			Dictionary<string,object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string,object>;
+			
+			// Check json represented correct class
+			if ((string)data["class"] != typeof(PatternArrayController).ToString()) {
+				Debug.LogError("Can't unpack deserialized json into PatternArrayController that represents a '"+data["class"]+"'.");
+			}
+			
 			pac.unpackDict(data);
 			
 			// Assign to editor

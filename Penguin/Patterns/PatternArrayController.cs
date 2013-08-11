@@ -16,6 +16,7 @@ namespace Penguin
 		{
 			Dictionary<string, object> data = new Dictionary<string, object>();
 			
+			data["class"] = GetType().ToString();
 			data["title"] = title;
 			
 			ArrayList patsData = new ArrayList();
