@@ -109,30 +109,9 @@ namespace LevelEditor
 			CellPattern[] patterns = patternsArray();
 			ArrayList patsData = new ArrayList();
 			foreach (CellPattern pat in patterns) {
-				patsData.Add(patternToDict(pat));
+				patsData.Add(pat.packDict());
 			}
 			data["patterns"] = patsData;
-			
-			return data;
-		}
-		
-		
-		private Dictionary<string,object> patternToDict(CellPattern pat)
-		{
-			Dictionary<string,object> data = new Dictionary<string, object>();
-			
-			// Common CellPattern data
-			data["class"    ] = pat.GetType().ToString();
-			data["originCol"] = pat.origin.col;
-			data["originRow"] = pat.origin.row;
-			data["colsLeft" ] = pat.colsLeft;
-			data["colsRight"] = pat.colsRight;
-			data["rows"     ] = pat.rows;
-			
-			// Subclass specific data
-			if (pat.GetType() == typeof(SingleTypePattern)) {
-				data["type"] = ((SingleTypePattern)pat).type;
-			}
 			
 			return data;
 		}
@@ -179,6 +158,9 @@ namespace LevelEditor
 			pattern.colsLeft  = 5;
 			pattern.colsRight = 5;
 			pattern.rows      = 5;
+			
+			// Temp set cell type
+			((SingleTypePattern)pattern).cellType = CellType.Normal;
 
 			// Calculate offset (sum vertical size)
 			PatternCoordinate offset = PatternCoordinate.zero;

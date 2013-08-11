@@ -35,7 +35,7 @@ namespace Penguin
 		
 		// json serialisation bridge methods
 		
-		public Dictionary<string,object> packDict()
+		virtual public Dictionary<string,object> packDict()
 		{
 			Dictionary<string,object> data = new Dictionary<string, object>();
 			
@@ -50,7 +50,7 @@ namespace Penguin
 		}
 		
 		
-		public void unpackDict(Dictionary<string,object> data)
+		virtual public void unpackDict(Dictionary<string,object> data)
 		{
 			origin.col = (int)data["originCol"];
 			origin.row = (int)data["originRow"];
