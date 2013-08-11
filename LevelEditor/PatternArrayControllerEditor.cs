@@ -106,7 +106,7 @@ namespace LevelEditor
 			CellPattern[] patterns = patternsArray();
 			string[] labels = new string[patterns.Length];
 			for (int i=0; i<patterns.Length; i++) {
-				labels[i] = patterns[i].GetType().ToString();
+				labels[i] = patterns[i].GetType().Name;
 			}
 			// Display as selection table
 			int newSel = GUILayout.SelectionGrid(selectedPatIndex_,labels,1);
@@ -139,7 +139,10 @@ namespace LevelEditor
 			if (selectedPatIndex_>=0)
 				pat = patternsArray ()[selectedPatIndex_];
 			
-			isInspectorVisible_ = EditorGUILayout.InspectorTitlebar(isInspectorVisible_,pat);
+			string label = "Pattern Inspector - ";
+			label += pat!=null ? pat.GetType().Name : "no selection"; 
+			
+			isInspectorVisible_ = EditorGUILayout.Foldout(isInspectorVisible_,label);
 			if (isInspectorVisible_ && patInspector_ != null)
 				patInspector_.OnGUI();
 		}
@@ -246,6 +249,8 @@ namespace LevelEditor
 			// Assign to editor
 			setController(pac);
 			
+			// Clear interface selection
+			selectPattern(-1);
 		}
 
 

@@ -58,15 +58,13 @@ namespace LevelEditor
 		protected virtual void propertiesGUI ()
 		{
 			
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Origin");
-			EditorGUILayout.PropertyField(originCol_,GUIContent.none);
+			
+			EditorGUILayout.PropertyField(originCol_);
 			// Origin column must be even
 			if (originCol_.intValue % 2 != 0)
 				originCol_.intValue++;
-			EditorGUILayout.PropertyField(originRow_,GUIContent.none);
-			EditorGUILayout.EndHorizontal();
-			
+			//EditorGUILayout.PropertyField(originRow_); // Shouldn't be directly editable
+			EditorGUILayout.LabelField("Origin Row",originRow_.intValue.ToString());
 			EditorGUILayout.PropertyField(rows_     );
 			EditorGUILayout.PropertyField(colsLeft_ );
 			EditorGUILayout.PropertyField(colsRight_);
