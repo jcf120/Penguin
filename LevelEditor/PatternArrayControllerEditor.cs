@@ -99,7 +99,9 @@ namespace LevelEditor
 		
 		private void save()
 		{
-			string json = controllerToJson();
+			// Convert structure to json
+			PatternArrayController pac = (PatternArrayController)controller_.targetObject;
+			string json = MiniJSON.Json.Serialize(pac.packDict());
 			
 			// Create asset
 			string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/" + title_.stringValue + ".txt");
@@ -129,13 +131,6 @@ namespace LevelEditor
 			// Assign to editor
 			setController(pac);
 			
-		}
-		
-		
-		private string controllerToJson()
-		{
-			PatternArrayController pac = (PatternArrayController)controller_.targetObject;
-			return MiniJSON.Json.Serialize(pac.packDict());
 		}
 
 
@@ -179,17 +174,9 @@ namespace LevelEditor
 				return;
 			}
 
-			// Give default size
-			pattern.colsLeft  = 5;
-			pattern.colsRight = 5;
-			pattern.rows      = 5;
-
 			// Calculate offset (sum vertical size)
 			PatternCoordinate offset = PatternCoordinate.zero;
 			CellPattern[] patterns = patternsArray();
-			foreach (CellPattern cp in patterns) {
-				Debug.Log(cp);
-			}
 			foreach (CellPattern cp in patterns) {
 				offset.row += cp.rows;
 			}
