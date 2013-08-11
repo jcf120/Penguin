@@ -32,7 +32,7 @@ namespace LevelEditor
 		
 		
 		// Interface data
-		private string newPatType_ = "SingleType";
+		private string    newPatType_ = "SingleType";
 		private TextAsset assetToLoad_;
 		
 		
@@ -169,6 +169,10 @@ namespace LevelEditor
 		private void newPattern()
 		{
 			// Build new CellPattern as from ScriptableObject
+			if (newPatType_ == "Cell") {
+				Debug.LogError("Can't instantiate abstract class CellPattern");
+				return;
+			}
 			CellPattern pattern = (CellPattern)ScriptableObject.CreateInstance(newPatType_+"Pattern");
 			if (pattern == null) {
 				Debug.LogError("CellPattern subclass '"+newPatType_+"' doesn't exist");
@@ -199,7 +203,6 @@ namespace LevelEditor
 			// Apply and append
 			pattern.origin = offset;
 			setPattern(patternCount_.intValue, pattern);
-			Debug.Log (patternCount_.intValue);
 		}
 		
 	}
