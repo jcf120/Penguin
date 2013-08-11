@@ -34,6 +34,12 @@ namespace LevelEditor
 		// Interface data
 		private string    newPatType_ = "SingleType";
 		private TextAsset assetToLoad_;
+		// List GUI
+		private Vector2 patListScrollPos_;
+		private int     selectedPatIndex_ = -1;
+		// Pattern Inspector GUI
+		private bool                 isInspectorVisible_ = true;
+		private CellPatternInspector patInspector;
 		
 		
 		// Instead of instantiation
@@ -49,10 +55,24 @@ namespace LevelEditor
 		
 		public  void OnGUI ()
 		{
+			loadingGUI();
+			
 			if (controller_==null)
 				return;
 			
-			// Asset loading
+			controller_.Update();
+			
+			savingGUI();
+			tableGUI();
+			newPatternGUI();
+			patternInspectorGUI();
+			
+			controller_.ApplyModifiedProperties();
+		}
+		
+		
+		private void loadingGUI()
+		{
 			EditorGUILayout.BeginHorizontal();
 			assetToLoad_ = EditorGUILayout.ObjectField(assetToLoad_, typeof(TextAsset), true) as TextAsset;
 			var oldEnabled = GUI.enabled; // state-machine housekeeping
@@ -61,23 +81,99 @@ namespace LevelEditor
 				load ();
 			GUI.enabled = oldEnabled;
 			EditorGUILayout.EndHorizontal();
-			
-			controller_.Update();
-			
-			title_.stringValue = EditorGUILayout.TextField("Title", title_.stringValue);
+		}
+		
+		
+		private void savingGUI()
+		{
+			EditorGUILayout.BeginHorizontal();
+			title_.stringValue = EditorGUILayout.TextField(title_.stringValue);
 			
 			if (canSave() && GUILayout.Button("Save"))
 					save();
-			
-			// Temp pattern type input
-			newPatType_ = EditorGUILayout.TextField(newPatType_);
-			
-			if (GUILayout.Button("New Pattern"))
-				newPattern();
-			
-			controller_.ApplyModifiedProperties();
+			EditorGUILayout.EndHorizontal();
 		}
 		
+		
+		private void tableGUI()
+		{
+			EditorGUILayout.Separator();
+			EditorGUILayout.LabelField("Patterns List");
+			patListScrollPos_ = EditorGUILayout.BeginScrollView(patListScrollPos_);
+			EditorGUILayout.BeginVertical();
+			
+			// pull labels from patterns
+			CellPattern[] patterns = patternsArray();
+			string[] labels = new string[patterns.Length];
+			for (int i=0; i<patterns.Length; i++) {
+				labels[i] = patterns[i].GetType().ToString();
+			}
+			// Display as selection table
+			int newSel = GUILayout.SelectionGrid(selectedPatIndex_,labels,1);
+			// Detect selection change
+			if (newSel != selectedPatIndex_)
+				selectPattern(newSel);
+			
+			EditorGUILayout.EndVertical();
+			EditorGUILayout.EndScrollView();
+		}
+		
+		
+		private void newPatternGUI()
+		{
+			EditorGUILayout.BeginHorizontal();
+			newPatType_ = EditorGUILayout.TextField(newPatType_);
+			
+			if (GUILayout.Button("Add"))
+				newPattern();
+			
+			EditorGUILayout.EndHorizontal();
+		}
+		
+		
+		
+		private void patternInspectorGUI()
+		{
+			CellPattern pat = null;
+			// Check for selection bounds then find pattern
+			if (selectedPatIndex_>=0)
+				pat = patternsArray ()[selectedPatIndex_];
+			
+			isInspectorVisible_ = EditorGUILayout.InspectorTitlebar(isInspectorVisible_,pat);
+			if (isInspectorVisible_ && patInspector != null)
+				patInspector.OnGUI();
+		}
+		
+		
+		private void selectPattern(int index)
+		{
+			// Negative index means no selection
+			if (index < 0) {
+				selectedPatIndex_ = -1;
+				return;
+			}
+			// Check bounds
+			if (index >= patternCount_.intValue) {
+				Debug.LogError("can't select pattern beyond bounds: "+index);
+				return;
+			}
+			
+			// successful selection change
+			selectedPatIndex_ = index;
+			
+			// Find inspector for pattern within editor namespace
+			CellPattern pat = patternsArray ()[index];
+			string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
+			
+			// Instantiate and pass in pattern
+			Type inspType = Type.GetType(classStr);
+			if (inspType == null) {
+				Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
+				inspType = typeof(CellPatternInspector);
+			}
+			patInspector = Activator.CreateInstance(inspType) as CellPatternInspector;
+			patInspector.target = pat;
+		}
 		
 		private void setController(PatternArrayController pac)
 		{

@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="PatternArrayControllerEditor.cs" />
+    <Compile Include="CellPatternInspector.cs" />
+    <Compile Include="SingleTypePatternInspector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
