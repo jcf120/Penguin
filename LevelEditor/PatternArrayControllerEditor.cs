@@ -39,7 +39,7 @@ namespace LevelEditor
 		private int     selectedPatIndex_ = -1;
 		// Pattern Inspector GUI
 		private bool                 isInspectorVisible_ = true;
-		private CellPatternInspector patInspector;
+		private CellPatternInspector patInspector_;
 		
 		
 		// Instead of instantiation
@@ -140,8 +140,8 @@ namespace LevelEditor
 				pat = patternsArray ()[selectedPatIndex_];
 			
 			isInspectorVisible_ = EditorGUILayout.InspectorTitlebar(isInspectorVisible_,pat);
-			if (isInspectorVisible_ && patInspector != null)
-				patInspector.OnGUI();
+			if (isInspectorVisible_ && patInspector_ != null)
+				patInspector_.OnGUI();
 		}
 		
 		
@@ -163,16 +163,20 @@ namespace LevelEditor
 			
 			// Find inspector for pattern within editor namespace
 			CellPattern pat = patternsArray ()[index];
-			string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
-			
-			// Instantiate and pass in pattern
-			Type inspType = Type.GetType(classStr);
-			if (inspType == null) {
-				Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
-				inspType = typeof(CellPatternInspector);
+			// Does inspector need instantiating or changing?
+			if (patInspector_==null || !patInspector_.doesInspectPattern(pat.GetType()))
+			{
+				// Yes - so instantiate new corresponding class
+				string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
+				Type inspType = Type.GetType(classStr);
+				if (inspType == null) {
+					Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
+					inspType = typeof(CellPatternInspector);
+				}
+				patInspector_ = Activator.CreateInstance(inspType) as CellPatternInspector;
 			}
-			patInspector = Activator.CreateInstance(inspType) as CellPatternInspector;
-			patInspector.target = pat;
+			
+			patInspector_.setTarget(pat);
 		}
 		
 		private void setController(PatternArrayController pac)
