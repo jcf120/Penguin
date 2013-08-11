@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,52 @@ namespace Penguin
 		
 		public string title = "untitled";
 		public List<CellPattern> patterns;
+		
+		
+		public Dictionary<string, object> packDict ()
+		{
+			Dictionary<string, object> data = new Dictionary<string, object>();
+			
+			data["title"] = title;
+			
+			ArrayList patsData = new ArrayList();
+			foreach (CellPattern pat in patterns) {
+				patsData.Add(pat.packDict());
+			}
+			data["patterns"] = patsData;
+			
+			return data;
+		}
+		
+		
+		public void unpackDict (Dictionary<string, object> data)
+		{
+			Debug.Log (data["title"]);
+			title = (string)data["title"];
+			
+			// Check pattern list hasn't already been filled
+			if (patterns.Count > 0) {
+				Debug.LogError("PatternArrayController unpacking failed - patterns List already filled.");
+				return;
+			}
+			Debug.Log (data["patterns"]);
+			List<object> patDatas = data["patterns"] as List<object>;
+			Debug.Log (patDatas[0]);
+			foreach (Dictionary<string, object> patData in patDatas) {
+				
+				// Determine CellPattern subclass and instantiate
+				string typeStr = (string)patData["class"];
+				if (Type.GetType(typeStr) == null) {
+					Debug.LogError("Can't unpack CellPattern subclass '" + typeStr + "' because it doesn't exist. Defaulting to SingleTypePattern");
+					typeStr = typeof(SingleTypePattern).ToString();
+					patData["cellType"] = Enum.GetName(typeof(CellType),CellType.Normal); // prevent attempted unpacking of nonexistant data
+				}
+				
+				CellPattern pat = ScriptableObject.CreateInstance(Type.GetType(typeStr)) as CellPattern;
+				pat.unpackDict(patData);
+			}
+				
+		}
 		
 		
 		public void OnEnable ()

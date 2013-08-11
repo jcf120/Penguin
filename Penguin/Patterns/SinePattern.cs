@@ -28,7 +28,7 @@ namespace Penguin
 			
 			amplitude  = (float)data["amplitude"];
 			wavelength = (float)data["wavelength"];
-			width      = (int  )data["width"];
+			width      = Convert.ToInt32(data["width"]);
 		}
 		
 		

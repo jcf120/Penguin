@@ -24,8 +24,8 @@ namespace Penguin
 		{
 			base.unpackDict (data);
 			
-			size       = (int)data["size"      ];
-			separation = (int)data["separation"];
+			size       = Convert.ToInt32(data["size"      ]);
+			separation = Convert.ToInt32(data["separation"]);
 		}
 		
 		

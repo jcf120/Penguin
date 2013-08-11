@@ -52,11 +52,11 @@ namespace Penguin
 		
 		virtual public void unpackDict(Dictionary<string,object> data)
 		{
-			origin.col = (int)data["originCol"];
-			origin.row = (int)data["originRow"];
-			colsLeft   = (int)data["colsLeft" ];
-			colsRight  = (int)data["colsRight"];
-			rows       = (int)data["rows"     ];
+			origin.col = Convert.ToInt32(data["originCol"]);
+			origin.row = Convert.ToInt32(data["originRow"]);
+			colsLeft   = Convert.ToInt32(data["colsLeft" ]);
+			colsRight  = Convert.ToInt32(data["colsRight"]);
+			rows       = Convert.ToInt32(data["rows"     ]);
 		}
 	}
 }

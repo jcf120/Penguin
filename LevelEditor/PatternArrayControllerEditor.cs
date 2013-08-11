@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace LevelEditor
 		
 		// Interface data
 		private string newPatType_ = "SingleType";
-		private PatternArrayController controllerToLoad_;
+		private TextAsset assetToLoad_;
 		
 		
 		// Instead of instantiation
@@ -48,13 +49,16 @@ namespace LevelEditor
 		
 		public  void OnGUI ()
 		{
+			if (controller_==null)
+				return;
+			
 			// Asset loading
 			EditorGUILayout.BeginHorizontal();
-			controllerToLoad_ = EditorGUILayout.ObjectField(controllerToLoad_, typeof(PatternArrayController), true) as PatternArrayController;
+			assetToLoad_ = EditorGUILayout.ObjectField(assetToLoad_, typeof(TextAsset), true) as TextAsset;
 			var oldEnabled = GUI.enabled; // state-machine housekeeping
-			GUI.enabled = controllerToLoad_!=null ? true : false;
+			GUI.enabled = assetToLoad_!=null ? true : false;
 			if (GUILayout.Button("Load"))
-				setController(controllerToLoad_);
+				load ();
 			GUI.enabled = oldEnabled;
 			EditorGUILayout.EndHorizontal();
 			
@@ -95,25 +99,43 @@ namespace LevelEditor
 		
 		private void save()
 		{
-			string json = MiniJSON.Json.Serialize(controllerToDict());
-			Debug.Log (json);
+			string json = controllerToJson();
+			
+			// Create asset
+			string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Levels/" + title_.stringValue + ".txt");
+			File.WriteAllText(path, json);
+			AssetDatabase.Refresh();
 		}
 		
 		
-		private Dictionary<string,object> controllerToDict()
+		private void load()
 		{
-			Dictionary<string,object> data = new Dictionary<string, object>();
-			
-			data["title"] = title_.stringValue;
-			
-			CellPattern[] patterns = patternsArray();
-			ArrayList patsData = new ArrayList();
-			foreach (CellPattern pat in patterns) {
-				patsData.Add(pat.packDict());
+			// Warn of data loss
+			if (!EditorUtility.DisplayDialog("Pattern Editor - Warning",
+											 "Continuing to load will scrap the current level",
+											 "Load",
+											 "Cancel"))
+			{
+				// Cancel load
+				return;
 			}
-			data["patterns"] = patsData;
 			
-			return data;
+			// Extract dictionary from json and unpack
+			PatternArrayController pac = ScriptableObject.CreateInstance<PatternArrayController>() as PatternArrayController;
+			string json = assetToLoad_.text;
+			Dictionary<string,object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string,object>;
+			pac.unpackDict(data);
+			
+			// Assign to editor
+			setController(pac);
+			
+		}
+		
+		
+		private string controllerToJson()
+		{
+			PatternArrayController pac = (PatternArrayController)controller_.targetObject;
+			return MiniJSON.Json.Serialize(pac.packDict());
 		}
 
 

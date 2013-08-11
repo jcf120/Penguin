@@ -27,8 +27,8 @@ namespace Penguin
 		{
 			base.unpackDict (data);
 			
-			breakSize    = (int)data["breakSize"];
-			intervalSize = (int)data["intervalSize"];
+			breakSize    = Convert.ToInt32(data["breakSize"   ]);
+			intervalSize = Convert.ToInt32(data["intervalSize"]);
 		}
 		
 		
