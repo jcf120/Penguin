@@ -7,7 +7,13 @@ namespace Penguin
 	[Serializable]
 	public abstract class CellPattern : ScriptableObject
 	{
-		public PatternCoordinate origin = PatternCoordinate.zero;
+		public int originCol = 0;
+		public int originRow = 0;
+		public PatternCoordinate origin
+		{
+			get { return new PatternCoordinate(originCol,originRow); }
+			set { originCol = value.col; originRow = value.row; }
+		}
 		public int rows      = 5;
 		public int colsLeft  = 5;
 		public int colsRight = 5;
@@ -52,11 +58,11 @@ namespace Penguin
 		
 		virtual public void unpackDict(Dictionary<string,object> data)
 		{
-			origin.col = Convert.ToInt32(data["originCol"]);
-			origin.row = Convert.ToInt32(data["originRow"]);
-			colsLeft   = Convert.ToInt32(data["colsLeft" ]);
-			colsRight  = Convert.ToInt32(data["colsRight"]);
-			rows       = Convert.ToInt32(data["rows"     ]);
+			originCol = Convert.ToInt32(data["originCol"]);
+			originRow = Convert.ToInt32(data["originRow"]);
+			colsLeft  = Convert.ToInt32(data["colsLeft" ]);
+			colsRight = Convert.ToInt32(data["colsRight"]);
+			rows      = Convert.ToInt32(data["rows"     ]);
 		}
 	}
 }
