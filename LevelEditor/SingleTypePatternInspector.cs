@@ -7,11 +7,21 @@ namespace LevelEditor
 	public class SingleTypePatternInspector : CellPatternInspector
 	{	
 		
-		public override void OnGUI ()
+		private SerializedProperty cellType_;
+		
+		public override void setTarget (CellPattern pattern)
 		{
-			base.OnGUI();
+			base.setTarget (pattern);
 			
-			EditorGUILayout.LabelField("moo!");
+			cellType_ = serializedTarget_.FindProperty("cellType");
+		}
+		
+		
+		protected override void propertiesGUI()
+		{
+			base.propertiesGUI();
+			
+			EditorGUILayout.PropertyField(cellType_);
 		}
 	}
 }
