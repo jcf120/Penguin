@@ -6,9 +6,9 @@ namespace Penguin
 	[Serializable]
 	public class SinePattern : CellPattern
 	{
-		public float amplitude;
-		public float wavelength;
-		public int   width;
+		public float amplitude  = 5.0f;
+		public float wavelength = 10.0f;
+		public int   width      = 3;
 		
 		public override Dictionary<string, object> packDict ()
 		{

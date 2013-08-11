@@ -9,8 +9,8 @@ namespace Penguin
 	{
 		
 		// Our algorithm parameters
-		public int breakSize;
-		public int intervalSize;
+		public int breakSize    = 1;
+		public int intervalSize = 3;
 		
 		public override Dictionary<string, object> packDict ()
 		{

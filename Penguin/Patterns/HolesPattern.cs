@@ -6,8 +6,8 @@ namespace Penguin
 	[Serializable]
 	public class HolesPattern : CellPattern
 	{
-		public int size;
-		public int separation;
+		public int size       = 2;
+		public int separation = 4;
 		
 		public override Dictionary<string, object> packDict ()
 		{

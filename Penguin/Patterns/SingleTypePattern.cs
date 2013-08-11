@@ -6,7 +6,7 @@ namespace Penguin
 	[Serializable]
 	public class SingleTypePattern : CellPattern
 	{
-		public CellType cellType;
+		public CellType cellType = CellType.Normal;
 		
 		
 		public override Dictionary<string,object> packDict()

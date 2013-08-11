@@ -7,10 +7,10 @@ namespace Penguin
 	[Serializable]
 	public abstract class CellPattern : ScriptableObject
 	{
-		public PatternCoordinate origin;
-		public int rows;
-		public int colsLeft;
-		public int colsRight;
+		public PatternCoordinate origin = PatternCoordinate.zero;
+		public int rows      = 5;
+		public int colsLeft  = 5;
+		public int colsRight = 5;
 		// This is how the CellMap will decide what to build
 		// Coordinates representation - wavy:
 		//   ---         ---         ---
