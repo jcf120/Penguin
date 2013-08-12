@@ -9,6 +9,7 @@ namespace Penguin
 	{
 		
 		public List<CellPattern> patterns;
+		public Dictionary<string,FreePatternStore> freePatsDict;
 		
 		
 		public Dictionary<string, object> packDict ()
@@ -59,6 +60,9 @@ namespace Penguin
 		{
 			if (patterns == null)
 				patterns = new List<CellPattern>();
+			
+			if (freePatsDict == null)
+				freePatsDict = new Dictionary<string, FreePatternStore>();
 			
 			hideFlags = HideFlags.HideInInspector;
 		}
