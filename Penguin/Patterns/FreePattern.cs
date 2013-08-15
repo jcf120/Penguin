@@ -21,7 +21,7 @@ namespace Penguin
 			// Convert to store's frame and check bounds
 			coor.col -= colsLeft;
 			if (coor.col < store_.width && coor.row < store_.height) {
-				return store_.values[coor.col][coor.row];
+				return store_.values[coor.col,coor.row];
 			}
 			else {
 				Debug.LogError("FreePattern queried beyond bounds. Defaulting to CellType.Empty");
