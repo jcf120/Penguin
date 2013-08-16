@@ -214,6 +214,12 @@ namespace LevelEditor
 					inspType = typeof(CellPatternInspector);
 				}
 				patInspector_ = Activator.CreateInstance(inspType) as CellPatternInspector;
+				
+				// If inspecting a FreePattern, we need to pass in the stores dictionary
+				if (patInspector_.GetType() == typeof(FreePatternInspector)) {
+					FreePatternInspector fpInsp = patInspector_ as FreePatternInspector;
+					fpInsp.storesDict = storeEditor_.storesDict;
+				}
 			}
 			
 			patInspector_.setTarget(pat);
