@@ -69,7 +69,7 @@ namespace LevelEditor
 		{
 			// Determine required patterns
 			List<string> requiredStores = new List<string>();
-			List< Dictionary<string, object> > patDicts = pacDict["patterns"] as List< Dictionary<string, object> >;
+			List<object> patDicts = pacDict["patterns"] as List<object>;
 			foreach (Dictionary<string, object> patDict in patDicts) {
 				
 				// Is it a free pattern?
@@ -83,9 +83,10 @@ namespace LevelEditor
 				}
 			}
 			
-			// Request each store from storeEditor
+			// Request each store from storeEditor unless labelled 'unassigned'
 			foreach (string storeName in requiredStores) {
-				storeEditor_.loadStore(storeName);
+				if (storeName != "unassigned")
+					storeEditor_.loadStore(storeName);
 			}
 		}
 		
