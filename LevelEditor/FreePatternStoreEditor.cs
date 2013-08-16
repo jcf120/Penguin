@@ -46,11 +46,10 @@ namespace LevelEditor
 		public void OnGUI ()
 		{
 			newStoreGUI();
+			storeSelectionAndSavingGUI();
 			
 			if (serializedTarget_ == null)
 				return;
-			
-			saveStoreGUI();
 		}
 		
 		
@@ -70,17 +69,39 @@ namespace LevelEditor
 		}
 		
 		
-		private void saveStoreGUI()
+		private void storeSelectionAndSavingGUI()
 		{
+			// Convert dictionary to array of names and find selected index
+			List<string> storeNames = (from kvp in storesDict select kvp.Key).ToList();
+			// Append file states
+			List<string>storeLabels = (from s
+									   in storeNames
+									   select s +  " - " + fileStates_[s].ToString()).ToList();
+			
+			int selIndex;
+			if (serializedTarget_ != null) { // selection present
+				string selName = nameForStore((FreePatternStore)serializedTarget_.targetObject);
+				selIndex = storeNames.IndexOf(selName);
+				
+			} else { // no selection
+				storeLabels.Add("-");
+				selIndex = storeLabels.IndexOf("-");
+			}
+			
 			EditorGUILayout.BeginHorizontal();
 			
-			// Look selected store's name
-			string storeName = nameForStore((FreePatternStore)serializedTarget_.targetObject);
-			// Append file state
-			string storeLabel = storeName + " - " + fileStates_[storeName].ToString();
-			EditorGUILayout.LabelField(storeLabel);
+			int newSelIndex = EditorGUILayout.Popup(selIndex, storeLabels.ToArray());
+			
+			// Detect selection change
+			if (newSelIndex != selIndex)
+				selectStore(storeNames[newSelIndex]);
+			
+			// Enable save for valid selection
+			bool oldEnabled = GUI.enabled; // state-machine housekeeping
+			GUI.enabled = serializedTarget_!=null && oldEnabled;
 			if (GUILayout.Button("Save"))
-				saveStore(storeName);
+				saveStore(storeNames[newSelIndex]);
+			GUI.enabled = oldEnabled;
 			
 			EditorGUILayout.EndHorizontal();
 		}
