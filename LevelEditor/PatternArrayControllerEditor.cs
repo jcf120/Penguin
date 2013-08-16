@@ -44,6 +44,8 @@ namespace LevelEditor
 		// Pattern Inspector GUI
 		private bool                 isInspectorVisible_ = true;
 		private CellPatternInspector patInspector_;
+		// FreePatternStore Inspector GUI
+		private FreePatternStoreEditor storeEditor_;
 		
 		
 		// Instead of instantiation
@@ -58,6 +60,33 @@ namespace LevelEditor
 			// Populate CellPattern subclass list
 			var subclasses = typeof(CellPattern).Assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(CellPattern)));
 			patternClassNames_ = (from sc in subclasses select sc.Name).ToArray();
+			
+			storeEditor_ = new FreePatternStoreEditor();
+		}
+		
+		
+		private void loadStoresForPacDict(Dictionary<string, object> pacDict)
+		{
+			// Determine required patterns
+			List<string> requiredStores = new List<string>();
+			List< Dictionary<string, object> > patDicts = pacDict["patterns"] as List< Dictionary<string, object> >;
+			foreach (Dictionary<string, object> patDict in patDicts) {
+				
+				// Is it a free pattern?
+				if (patDict["class"].ToString() == typeof(FreePattern).ToString()) {
+					
+					string storeName = patDict["storeName"] as string;
+					
+					// Add if it hasn't been already
+					if (!requiredStores.Contains(storeName))
+						requiredStores.Add(storeName);
+				}
+			}
+			
+			// Request each store from storeEditor
+			foreach (string storeName in requiredStores) {
+				storeEditor_.loadStore(storeName);
+			}
 		}
 		
 		
@@ -74,6 +103,7 @@ namespace LevelEditor
 			tableGUI();
 			newPatternGUI();
 			patternInspectorGUI();
+			storeEditor_.OnGUI();
 			
 			controller_.ApplyModifiedProperties();
 		}
@@ -139,7 +169,6 @@ namespace LevelEditor
 		}
 		
 		
-		
 		private void patternInspectorGUI()
 		{
 			CellPattern pat = null;
@@ -190,6 +219,7 @@ namespace LevelEditor
 			patInspector_.setTarget(pat);
 		}
 		
+			
 		private void setController(PatternArrayController pac)
 		{
 			controller_ = new SerializedObject(pac);
@@ -252,7 +282,9 @@ namespace LevelEditor
 				Debug.LogError("Can't unpack deserialized json into PatternArrayController that represents a '"+data["class"]+"'.");
 			}
 			
+			loadStoresForPacDict(data);
 			pac.unpackDict(data);
+			FreePatternStoreLinker.linkPacToStores(pac, storeEditor_.storesDict);
 			
 			// Assign to editor
 			setController(pac);
