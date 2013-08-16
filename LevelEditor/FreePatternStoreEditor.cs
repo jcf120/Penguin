@@ -1,18 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Penguin;
 
 namespace LevelEditor
 {
+	
 	public class FreePatternStoreEditor
 	{
 		
 		// Store selection and linking
 		private Dictionary<string, FreePatternStore> storesDict_;
 		public  Dictionary<string, FreePatternStore> storesDict {get{return storesDict_;}}
+		
+		// File tracking
+		enum FileState {unsaved, saved, edited}
+		private Dictionary<string, FileState> fileStates_;
 		
 		
 		// Serialized data
@@ -33,12 +39,18 @@ namespace LevelEditor
 		public FreePatternStoreEditor()
 		{
 			storesDict_ = new Dictionary<string, FreePatternStore>();
+			fileStates_ = new Dictionary<string, FileState>();
 		}
 		
 		
 		public void OnGUI ()
 		{
 			newStoreGUI();
+			
+			if (serializedTarget_ == null)
+				return;
+			
+			saveStoreGUI();
 		}
 		
 		
@@ -58,6 +70,22 @@ namespace LevelEditor
 		}
 		
 		
+		private void saveStoreGUI()
+		{
+			EditorGUILayout.BeginHorizontal();
+			
+			// Look selected store's name
+			string storeName = nameForStore((FreePatternStore)serializedTarget_.targetObject);
+			// Append file state
+			string storeLabel = storeName + " - " + fileStates_[storeName].ToString();
+			EditorGUILayout.LabelField(storeLabel);
+			if (GUILayout.Button("Save"))
+				saveStore(storeName);
+			
+			EditorGUILayout.EndHorizontal();
+		}
+		
+		
 		private void setTarget(FreePatternStore store)
 		{
 			serializedTarget_ = new SerializedObject(store);
@@ -65,6 +93,12 @@ namespace LevelEditor
 			width_  = serializedTarget_.FindProperty("width" );
 			height_ = serializedTarget_.FindProperty("height");
 			values_ = serializedTarget_.FindProperty("values");
+		}
+		
+		
+		public string nameForStore(FreePatternStore fps)
+		{
+			return storesDict_.FirstOrDefault(s => s.Value == fps).Key;
 		}
 		
 		
@@ -90,6 +124,7 @@ namespace LevelEditor
 			fps.unpackDict(data);
 			
 			storesDict_[name] = fps;
+			fileStates_[name] = FileState.saved;
 			
 			return fps;
 		}
@@ -139,6 +174,7 @@ namespace LevelEditor
 			
 			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
 			storesDict_[storeName] = fps;
+			fileStates_[storeName] = FileState.unsaved;
 			selectStore(storeName);
 		}
 		
@@ -167,10 +203,12 @@ namespace LevelEditor
 			FreePatternStore store = storesDict_[storeName];
 			string json = MiniJSON.Json.Serialize(store.packDict());
 			
-			// Add to assets
+			// Add to assets and update state
 			File.WriteAllText(path, json);
 			AssetDatabase.Refresh();
+			fileStates_[storeName] = FileState.saved;
 		}
 	}
+
 }
 
