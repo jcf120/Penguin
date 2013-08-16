@@ -47,9 +47,12 @@ namespace LevelEditor
 			EditorGUILayout.BeginHorizontal();
 			
 			newStoreName_ = GUILayout.TextField(newStoreName_);
-			if (GUILayout.Button("New Store")) {
-				
-			}
+			// Enable save if text has been entered
+			bool oldEnabled = GUI.enabled; // state-machine housekeeping
+			GUI.enabled = (newStoreName_.Length > 0) && oldEnabled;
+			if (GUILayout.Button("New Store"))
+				newStore(newStoreName_);
+			GUI.enabled = oldEnabled;
 			
 			EditorGUILayout.EndHorizontal();
 		}

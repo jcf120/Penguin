@@ -113,8 +113,8 @@ namespace LevelEditor
 		{
 			EditorGUILayout.BeginHorizontal();
 			assetToLoad_ = EditorGUILayout.ObjectField(assetToLoad_, typeof(TextAsset), true) as TextAsset;
-			var oldEnabled = GUI.enabled; // state-machine housekeeping
-			GUI.enabled = assetToLoad_!=null ? true : false;
+			bool oldEnabled = GUI.enabled; // state-machine housekeeping
+			GUI.enabled = (assetToLoad_!=null) && oldEnabled;
 			if (GUILayout.Button("Load"))
 				load ();
 			GUI.enabled = oldEnabled;
