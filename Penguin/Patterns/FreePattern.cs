@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Penguin
@@ -13,6 +14,21 @@ namespace Penguin
 		{
 			if (store == null)
 				store = new FreePatternStore();
+		}
+		
+		
+		public override System.Collections.Generic.Dictionary<string, object> packDict ()
+		{
+			Dictionary<string, object> data = base.packDict ();
+			data["storeName"] = storeName;
+			return data;
+		}
+		
+		
+		public override void unpackDict (System.Collections.Generic.Dictionary<string, object> data)
+		{
+			base.unpackDict (data);
+			storeName = data["storeName"] as string;
 		}
 		
 		
