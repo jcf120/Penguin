@@ -57,6 +57,7 @@
     <Compile Include="Utilities\MiniJSON.cs" />
     <Compile Include="Patterns\FreePatternStore.cs" />
     <Compile Include="Patterns\FreePattern.cs" />
+    <Compile Include="Patterns\FreePatternStoreLinker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
