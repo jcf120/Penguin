@@ -33,7 +33,7 @@ namespace LevelEditor
 		
 		
 		// Save/load directory
-		private static string storeDirectory_ = "Assets/Levels/FreePatterns/";
+		private static string storeDirectory_ = "Assets/Levels/FreePatternStores/";
 		
 		
 		public FreePatternStoreEditor()
