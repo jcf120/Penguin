@@ -47,6 +47,7 @@
     <Compile Include="SingleTypePatternInspector.cs" />
     <Compile Include="SinePatternInspector.cs" />
     <Compile Include="FreePatternStoreEditor.cs" />
+    <Compile Include="FreePatternInspector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
