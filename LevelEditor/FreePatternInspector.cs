@@ -34,9 +34,15 @@ namespace LevelEditor
 			// Convert dictionary to array of names and add null selection
 			List<string> storeNames = (from kvp in storesDict select kvp.Key).ToList();
 			storeNames.Add ("unassigned");
+			
+			EditorGUILayout.BeginHorizontal();
+			
+			EditorGUILayout.LabelField("Store");
 			// Display as popup
 			int selIndex = storeNames.IndexOf(storeName_.stringValue);
 			selIndex = EditorGUILayout.Popup(selIndex, storeNames.ToArray());
+			
+			EditorGUILayout.EndHorizontal();
 			
 			// Update properties
 			storeName_.stringValue = storeNames[selIndex];
