@@ -82,7 +82,7 @@ namespace LevelEditor
 			
 			TextAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
 			string json = asset.text;
-			FreePatternStore fps = new FreePatternStore();
+			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
 			Dictionary<string, object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
 			fps.unpackDict(data);
 			
@@ -134,7 +134,7 @@ namespace LevelEditor
 				return;
 			}
 			
-			FreePatternStore fps = new FreePatternStore();
+			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
 			storesDict_[storeName] = fps;
 			selectStore(storeName);
 		}

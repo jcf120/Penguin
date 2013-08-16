@@ -31,15 +31,21 @@ namespace LevelEditor
 				return;
 			}
 			
-			// Convert dictionary to array of names
-			string[] storeNames = (from kvp in storesDict select kvp.Key).ToArray();
+			// Convert dictionary to array of names and add null selection
+			List<string> storeNames = (from kvp in storesDict select kvp.Key).ToList();
+			storeNames.Add ("unassigned");
 			// Display as popup
-			int selIndex = Array.IndexOf(storeNames, storeName_.stringValue);
-			selIndex = EditorGUILayout.Popup(selIndex, storeNames);
+			int selIndex = storeNames.IndexOf(storeName_.stringValue);
+			selIndex = EditorGUILayout.Popup(selIndex, storeNames.ToArray());
 			
 			// Update properties
 			storeName_.stringValue = storeNames[selIndex];
-			store_.objectReferenceValue = storesDict[storeName_.stringValue];
+			if (storeName_.stringValue == "unassigned") {
+				store_.objectReferenceValue = null;
+			}
+			else {
+				store_.objectReferenceValue = storesDict[storeName_.stringValue];
+			}
 			
 		}
 	}

@@ -6,15 +6,8 @@ namespace Penguin
 {
 	public class FreePattern : CellPattern
 	{
-		public string storeName; // used by PatternArray controller to match store on unpacking
+		public string storeName = "unassigned"; // used by PatternArray controller to match store on unpacking
 		public FreePatternStore store;
-		
-		
-		public void OnEnable ()
-		{
-			if (store == null)
-				store = new FreePatternStore();
-		}
 		
 		
 		public override System.Collections.Generic.Dictionary<string, object> packDict ()
