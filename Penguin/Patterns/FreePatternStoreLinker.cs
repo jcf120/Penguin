@@ -19,6 +19,12 @@ namespace Penguin
 					if (freePat.store != null)
 						Debug.LogWarning("FreePattern's store '"+freePat.storeName+"' already linked - overwriting");
 					
+					// Warn if FreePattern has specified a store
+					if (freePat.storeName == "unassigned") {
+						Debug.LogWarning("FreePattern's store has not been specified");
+						break;
+					}
+					
 					// Does dict contain store?
 					if (storesDict.ContainsKey(freePat.storeName)) {
 						freePat.store = storesDict[freePat.storeName];
