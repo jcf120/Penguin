@@ -45,11 +45,46 @@ namespace LevelEditor
 		
 		public void OnGUI ()
 		{
+			loadStoresDragAndDropGUI();
 			newStoreGUI();
 			storeSelectionAndSavingGUI();
 			
 			if (serializedTarget_ == null)
 				return;
+		}
+		
+		
+		private void loadStoresDragAndDropGUI()
+		{
+			var evt = Event.current;
+			
+			var dropArea = GUILayoutUtility.GetRect(0.0f, 50.0f, GUILayout.ExpandWidth(true));
+			GUI.Box(dropArea, "Drop to load stores");
+			
+			switch(evt.type)
+			{
+			case EventType.DragUpdated:
+			case EventType.DragPerform:
+				// Ignore event if outside drop area
+				if (!dropArea.Contains(evt.mousePosition))
+					break;
+				
+				DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+				
+				if (evt.type == EventType.DragPerform) {
+					DragAndDrop.AcceptDrag();
+					
+					foreach (var draggedObject in DragAndDrop.objectReferences) {
+						
+						var textAsset = draggedObject as TextAsset;
+						if (!textAsset)
+							continue;
+						
+						loadStore(textAsset);
+					}
+				}
+				break;
+			}
 		}
 		
 		
@@ -139,11 +174,18 @@ namespace LevelEditor
 			}
 			
 			TextAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
+			return loadStore(asset);
+		}
+		
+		
+		public FreePatternStore loadStore(TextAsset asset)
+		{
 			string json = asset.text;
 			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
 			Dictionary<string, object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
 			fps.unpackDict(data);
 			
+			string name = asset.name;
 			storesDict_[name] = fps;
 			fileStates_[name] = FileState.saved;
 			
