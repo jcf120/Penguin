@@ -40,7 +40,7 @@ namespace Penguin
 			}
 			
 			Dictionary<string, object> data = new Dictionary<string, object>();
-			data["class"   ] = "FreePatternStore";
+			data["class"   ] = GetType().ToString();
 			data["typeDict"] = typeDict;
 			data["height"  ] = height;
 			data["width"   ] = width;
@@ -51,6 +51,12 @@ namespace Penguin
 		
 		public void unpackDict(Dictionary<string, object> data)
 		{
+			// Check data represents this class
+			if (data["class"].ToString() != GetType().ToString()) {
+				Debug.LogError("Data used to unpack FreePatternStore doesn't represent class. Unpacking aborted");
+				return;
+			}
+			
 			Dictionary<object, CellType> reverseTypeDict = new Dictionary<object, CellType>();
 			Dictionary<string, object> typeDict = data["typeDict"] as Dictionary<string, object>;
 			foreach (KeyValuePair<string, object> kvp in typeDict) {

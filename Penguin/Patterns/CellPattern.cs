@@ -58,6 +58,11 @@ namespace Penguin
 		
 		virtual public void unpackDict(Dictionary<string,object> data)
 		{
+			if (data["class"].ToString() != GetType().ToString()) {
+				Debug.LogError("Data used to unpack "+GetType().ToString()+" doesn't represent class. Unpacking aborted");
+				return;
+			}
+			
 			originCol = Convert.ToInt32(data["originCol"]);
 			originRow = Convert.ToInt32(data["originRow"]);
 			colsLeft  = Convert.ToInt32(data["colsLeft" ]);
