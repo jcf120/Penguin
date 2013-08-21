@@ -10,7 +10,7 @@ using Penguin;
 
 namespace LevelEditor
 {
-	public class PatternEditor : EditorWindow
+	public class PatternEditor : EditorWindow, PatternArrayViewDataSource
 	{
 		[MenuItem("Window/Pattern Editor")]
 		public static void ShowWindow ()
@@ -19,33 +19,18 @@ namespace LevelEditor
 			window.title = "Pattern Editor";
 		}
 		
-		private string title_ = "untitled";
-		
 		// Serialized data
 		private SerializedObject   controller_;
 		private SerializedProperty patternCount_;
 		
 		
-		// Serialized property paths
-		private static string patternSizePath_ = "patterns.Array.size";
-		private static string patternDataPath_ = "patterns.Array.data[{0}]";
-		
-		
-		// Interface data
-		
-		// Loading GUI
-		private TextAsset assetToLoad_;
-		// List GUI
-		private Vector2 patListScrollPos_;
-		private int     selectedPatIndex_ = -1;
-		// New Pattern GUI
-		string[] patternClassNames_;
-		int      selectedClass_ = 0;
-		// Pattern Inspector GUI
-		private bool                 isInspectorVisible_ = true;
-		private CellPatternInspector patInspector_;
-		// FreePatternStore Inspector GUI
+		// Interface members
+		private PatternArrayView       patView_;
+		private CellPatternInspector   patInspector_;
 		private FreePatternStoreEditor storeEditor_;
+		
+		private int      selectedPatIndex_ = -1; // negative represents no selection
+		private string[] patternClassNames_;
 		
 		
 		// Instead of instantiation
@@ -62,54 +47,47 @@ namespace LevelEditor
 			patternClassNames_ = (from sc in subclasses select sc.Name).ToArray();
 			
 			storeEditor_ = new FreePatternStoreEditor();
+			patView_ = new PatternArrayView(this);
 		}
 		
 		
-		private void loadStoresForPacDict(Dictionary<string, object> pacDict)
-		{
-			// Determine required patterns
-			List<string> requiredStores = new List<string>();
-			List<object> patDicts = pacDict["patterns"] as List<object>;
-			foreach (Dictionary<string, object> patDict in patDicts) {
-				
-				// Is it a free pattern?
-				if (patDict["class"].ToString() == typeof(FreePattern).ToString()) {
-					
-					string storeName = patDict["storeName"] as string;
-					
-					// Add if it hasn't been already
-					if (!requiredStores.Contains(storeName))
-						requiredStores.Add(storeName);
-				}
-			}
-			
-			// Request each store from storeEditor unless labelled 'unassigned'
-			foreach (string storeName in requiredStores) {
-				if (storeName != "unassigned")
-					storeEditor_.loadStore(storeName);
-			}
-		}
+		#region GUI Code
 		
-		
+		private static float paneWidth = 200.0f;
 		public  void OnGUI ()
 		{
-			loadingGUI();
-			
 			if (controller_==null)
 				return;
 			
-			controller_.Update();
+			EditorGUILayout.BeginHorizontal();
 			
+			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(paneWidth));
+			loadingGUI();
 			savingGUI();
+			
+			controller_.Update();
 			tableGUI();
 			newPatternGUI();
 			patternInspectorGUI();
-			storeEditor_.OnGUI();
-			
 			controller_.ApplyModifiedProperties();
+			
+			storeEditor_.OnGUI();
+			EditorGUILayout.EndVertical();
+			
+			//EditorGUILayout.BeginVertical();
+			Rect patViewBounds = GUILayoutUtility.GetRect(0.0f, 0.0f,
+												  GUILayout.ExpandHeight(true),
+												  GUILayout.ExpandWidth (true));
+			patViewBounds.x     += paneWidth;
+			patViewBounds.width -= paneWidth;
+			patView_.OnGUI(patViewBounds);
+			//EditorGUILayout.EndVertical();
+			
+			EditorGUILayout.EndHorizontal();
 		}
 		
 		
+		private TextAsset assetToLoad_;
 		private void loadingGUI()
 		{
 			EditorGUILayout.BeginHorizontal();
@@ -123,6 +101,7 @@ namespace LevelEditor
 		}
 		
 		
+		private string title_ = "untitled";
 		private void savingGUI()
 		{
 			EditorGUILayout.BeginHorizontal();
@@ -134,6 +113,7 @@ namespace LevelEditor
 		}
 		
 		
+		private Vector2 patListScrollPos_;
 		private void tableGUI()
 		{
 			EditorGUILayout.Separator();
@@ -158,6 +138,7 @@ namespace LevelEditor
 		}
 		
 		
+		int selectedClass_ = 0;
 		private void newPatternGUI()
 		{
 			EditorGUILayout.BeginHorizontal();
@@ -170,6 +151,7 @@ namespace LevelEditor
 		}
 		
 		
+		private bool isInspectorVisible_ = true;
 		private void patternInspectorGUI()
 		{
 			CellPattern pat = null;
@@ -185,54 +167,10 @@ namespace LevelEditor
 				patInspector_.OnGUI();
 		}
 		
+		#endregion GUI Code
 		
-		private void selectPattern(int index)
-		{
-			// Negative index means no selection
-			if (index < 0) {
-				selectedPatIndex_ = -1;
-				return;
-			}
-			// Check bounds
-			if (index >= patternCount_.intValue) {
-				Debug.LogError("can't select pattern beyond bounds: "+index);
-				return;
-			}
-			
-			// successful selection change
-			selectedPatIndex_ = index;
-			
-			// Find inspector for pattern within editor namespace
-			CellPattern pat = patternsArray ()[index];
-			// Does inspector need instantiating or changing?
-			if (patInspector_==null || !patInspector_.doesInspectPattern(pat.GetType()))
-			{
-				// Yes - so instantiate new corresponding class
-				string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
-				Type inspType = Type.GetType(classStr);
-				if (inspType == null) {
-					Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
-					inspType = typeof(CellPatternInspector);
-				}
-				patInspector_ = Activator.CreateInstance(inspType) as CellPatternInspector;
-				
-				// If inspecting a FreePattern, we need to pass in the stores dictionary
-				if (patInspector_.GetType() == typeof(FreePatternInspector)) {
-					FreePatternInspector fpInsp = patInspector_ as FreePatternInspector;
-					fpInsp.storesDict = storeEditor_.storesDict;
-				}
-			}
-			
-			patInspector_.setTarget(pat);
-		}
 		
-			
-		private void setController(PatternArrayController pac)
-		{
-			controller_ = new SerializedObject(pac);
-				
-			patternCount_ = controller_.FindProperty(patternSizePath_);
-		}
+		#region Saving and Loading
 		
 		
 		private bool canSave()
@@ -299,8 +237,54 @@ namespace LevelEditor
 			// Clear interface selection
 			selectPattern(-1);
 		}
+		
+			
+		private void setController(PatternArrayController pac)
+		{
+			controller_ = new SerializedObject(pac);
+				
+			patternCount_ = controller_.FindProperty(patternSizePath_);
+		}
+		
+		
+		private void loadStoresForPacDict(Dictionary<string, object> pacDict)
+		{
+			// Determine required patterns
+			List<string> requiredStores = new List<string>();
+			List<object> patDicts = pacDict["patterns"] as List<object>;
+			foreach (Dictionary<string, object> patDict in patDicts) {
+				
+				// Is it a free pattern?
+				if (patDict["class"].ToString() == typeof(FreePattern).ToString()) {
+					
+					string storeName = patDict["storeName"] as string;
+					
+					// Add if it hasn't been already
+					if (!requiredStores.Contains(storeName))
+						requiredStores.Add(storeName);
+				}
+			}
+			
+			// Request each store from storeEditor unless labelled 'unassigned'
+			foreach (string storeName in requiredStores) {
+				if (storeName != "unassigned")
+					storeEditor_.loadStore(storeName);
+			}
+		}
+		
+		
+		#endregion Saving and Loading
 
-
+		
+		#region Array Handling
+		
+		
+		
+		// Serialized property paths
+		private static string patternSizePath_ = "patterns.Array.size";
+		private static string patternDataPath_ = "patterns.Array.data[{0}]";
+		
+		
 		private CellPattern[] patternsArray()
 		{
 			var count = controller_.FindProperty("patterns.Array.size").intValue;
@@ -311,6 +295,47 @@ namespace LevelEditor
 			}
 
 			return array;
+		}
+		
+		
+		private void selectPattern(int index)
+		{
+			// Negative index means no selection
+			if (index < 0) {
+				selectedPatIndex_ = -1;
+				return;
+			}
+			// Check bounds
+			if (index >= patternCount_.intValue) {
+				Debug.LogError("can't select pattern beyond bounds: "+index);
+				return;
+			}
+			
+			// successful selection change
+			selectedPatIndex_ = index;
+			
+			// Find inspector for pattern within editor namespace
+			CellPattern pat = patternsArray ()[index];
+			// Does inspector need instantiating or changing?
+			if (patInspector_==null || !patInspector_.doesInspectPattern(pat.GetType()))
+			{
+				// Yes - so instantiate new corresponding class
+				string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
+				Type inspType = Type.GetType(classStr);
+				if (inspType == null) {
+					Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
+					inspType = typeof(CellPatternInspector);
+				}
+				patInspector_ = Activator.CreateInstance(inspType) as CellPatternInspector;
+				
+				// If inspecting a FreePattern, we need to pass in the stores dictionary
+				if (patInspector_.GetType() == typeof(FreePatternInspector)) {
+					FreePatternInspector fpInsp = patInspector_ as FreePatternInspector;
+					fpInsp.storesDict = storeEditor_.storesDict;
+				}
+			}
+			
+			patInspector_.setTarget(pat);
 		}
 
 
@@ -355,6 +380,36 @@ namespace LevelEditor
 			pattern.origin = offset;
 			setPattern(patternCount_.intValue, pattern);
 		}
+		
+		
+		#endregion Array Handling
+		
+		
+		#region Data Source
+		
+		// These are temporary false return values
+		// for use while implementing the the PatternArrayView
+		
+		
+		public int numberOfRows(PatternArrayView view)
+		{
+			return 10;
+		}
+		
+		
+		public int numberOfColumns(PatternArrayView view)
+		{
+			return 10;
+		}
+		
+		
+		public Color colourForCell(PatternArrayView view, int col, int row)
+		{
+			return Color.cyan;
+		}
+		
+		
+		#endregion Data Source
 		
 	}
 }
