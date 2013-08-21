@@ -42,7 +42,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="CellMapTest.cs" />
     <Compile Include="CellIndexTest.cs" />
     <Compile Include="PatternCoordinateTest.cs" />
     <Compile Include="CellVectorTest.cs" />
