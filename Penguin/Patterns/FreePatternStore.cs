@@ -19,29 +19,22 @@ namespace Penguin
 		
 		public Dictionary<string, object> packDict()
 		{
-			List< List<int> > packedValues = new List< List<int> >();
+			List<int> packedValues = new List<int>();
 			
 			// Rather than convert each enum in the array to a string, first index only used types into ints
 			Dictionary<CellType,int> typeDict = new Dictionary<CellType, int>();
 			
-			for (int i=0; i<width; i++) {
+			for (int i=0; i<width*height; i++) {
 				
-				List<int> packedRow = new List<int>();
-				
-				for (int j=0; j<height; j++) {
+				CellType ct = values[i];
 					
-					CellType ct = this[i,j];
-					
-					// Has type been indexed?
-					if (!typeDict.ContainsKey(ct)) {
-						// Then add it to the index
-						typeDict[ct] = typeDict.Count;
-					}
-					
-					packedRow.Add(typeDict[ct]);
+				// Has type been indexed?
+				if (!typeDict.ContainsKey(ct)) {
+					// Then add it to the index
+					typeDict[ct] = typeDict.Count;
 				}
 				
-				packedValues.Add(packedRow);
+				packedValues.Add(typeDict[ct]);
 			}
 			
 			Dictionary<string, object> data = new Dictionary<string, object>();
@@ -62,22 +55,20 @@ namespace Penguin
 				return;
 			}
 			
-			Dictionary<object, CellType> reverseTypeDict = new Dictionary<object, CellType>();
+			Dictionary<int, CellType> reverseTypeDict = new Dictionary<int, CellType>();
 			Dictionary<string, object> typeDict = data["typeDict"] as Dictionary<string, object>;
 			foreach (KeyValuePair<string, object> kvp in typeDict) {
-				reverseTypeDict[kvp.Key] = (CellType)Enum.Parse(typeof(CellType), (string)kvp.Value);
+				reverseTypeDict[Convert.ToInt32(kvp.Value)] = (CellType)Enum.Parse(typeof(CellType), kvp.Key.ToString());
 			}
 			
 			height = Convert.ToInt32(data["height"]);
 			width  = Convert.ToInt32(data["width" ]);
 			values = new CellType[width*height];
 			
-			List< List<object> > packedValues = data["values"] as List< List<object> >;
-			for (int i=0; i<width; i++) {
-				for (int j=0; j<height; j++) {
-					CellType ct = reverseTypeDict[packedValues[i][j]];
-					this[i,j] = ct;
-				}
+			List<object> packedValues = data["values"] as List<object>;
+			for (int i=0; i<width*height; i++) {
+				CellType ct = reverseTypeDict[Convert.ToInt32(packedValues[i])];
+				values[i] = ct;
 			}
 		}
 	}
