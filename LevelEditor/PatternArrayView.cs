@@ -15,6 +15,12 @@ namespace LevelEditor
 	}
 	
 	
+	public interface PatternArrayViewResponder
+	{
+		void cellClicked(PatternArrayView view, int col, int row);
+	}
+	
+	
 	public class PatternArrayView
 	{
 		private PatternArrayViewDataSource dataSource_;
