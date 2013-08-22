@@ -333,11 +333,9 @@ namespace LevelEditor
 			// Check bounds
 			if (   col >= 0 && col < store.width
 				&& row >= 0 && row < store.height)
-				return store.values[col, row];
+				return store[col, row];
 			else
 				return CellType.Undefined;
-			
-			return store.values[col,row];
 		}
 		
 		

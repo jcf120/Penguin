@@ -9,7 +9,12 @@ namespace Penguin
 	{
 		public int width;
 		public int height;
-		public CellType[,] values;
+		public CellType[] values;
+		public CellType this[int col, int row]
+		{
+			get {return values[width*row + col];}
+			set {values[width*row + col] = value;}
+		}
 		
 		
 		public Dictionary<string, object> packDict()
@@ -25,7 +30,7 @@ namespace Penguin
 				
 				for (int j=0; j<height; j++) {
 					
-					CellType ct = values[i,j];
+					CellType ct = this[i,j];
 					
 					// Has type been indexed?
 					if (!typeDict.ContainsKey(ct)) {
@@ -65,13 +70,13 @@ namespace Penguin
 			
 			height = Convert.ToInt32(data["height"]);
 			width  = Convert.ToInt32(data["width" ]);
-			values = new CellType[width,height];
+			values = new CellType[width*height];
 			
 			List< List<object> > packedValues = data["values"] as List< List<object> >;
 			for (int i=0; i<width; i++) {
 				for (int j=0; j<height; j++) {
 					CellType ct = reverseTypeDict[packedValues[i][j]];
-					values[i,j] = ct;
+					this[i,j] = ct;
 				}
 			}
 		}
