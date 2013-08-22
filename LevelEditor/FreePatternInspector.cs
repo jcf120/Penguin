@@ -37,10 +37,10 @@ namespace LevelEditor
 			
 			EditorGUILayout.BeginHorizontal();
 			
-			EditorGUILayout.LabelField("Store");
+			EditorGUILayout.LabelField("Store",GUILayout.MaxWidth(50.0f));
 			// Display as popup
 			int selIndex = storeNames.IndexOf(storeName_.stringValue);
-			selIndex = EditorGUILayout.Popup(selIndex, storeNames.ToArray());
+			selIndex = EditorGUILayout.Popup(selIndex, storeNames.ToArray(), GUILayout.MinWidth(100.0f));
 			
 			EditorGUILayout.EndHorizontal();
 			
