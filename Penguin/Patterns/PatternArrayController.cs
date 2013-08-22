@@ -68,20 +68,17 @@ namespace Penguin
 		}
 		
 		
-		public void removePattern(CellPattern pattern)
-		{
-			//patterns.Remove(pattern);
-		}
-		
-		
 		public CellPattern patternAtCoor(PatternCoordinate coor)
 		{	
 			// Check vertical region
 			// This search could be made more efficient, it needn't iterate over all items
 			
-			/*CellPattern[] pats =  patterns.FindAll((pat) => {
+			CellPattern[] pats =  patterns.FindAll((pat) => {
 				return (pat.origin.row <= coor.row) && (pat.origin.row + pat.rows > coor.row);
 			}).ToArray();
+			
+			if (pats.Length > 1)
+				Debug.LogError("Two share row "+coor.row+", which is current unsupported behaviour.");
 			
 			// Check horizontal region
 			// return first matching pattern
@@ -91,7 +88,7 @@ namespace Penguin
 					&& pat.origin.col + pat.colsRight >= coor.col) {
 					return pat;
 				}
-			}*/
+			}
 			
 			// No match found
 			return null;
@@ -104,13 +101,67 @@ namespace Penguin
 			
 			// If no pattern present, return empty
 			if (pat == null)
-				return CellType.Empty;
+				return CellType.Undefined;
 			
 			// Calc relative coordinates
 			coor.row -= pat.origin.row;
 			coor.col -= pat.origin.col;
 			
 			return pat.typeAtCoordinate(coor);
+		}
+		
+		
+		public int colsLeft()
+		{
+			if (patterns.Count == 0)
+				return 0;
+			
+			// Find extreme left and right patterns
+			int leftBound  = int.MaxValue;
+			foreach (CellPattern pat in patterns) {
+				
+				int b = pat.origin.col - pat.colsLeft;
+				if (b < leftBound)
+					leftBound = b;
+			}
+			
+			return leftBound;
+		}
+		
+		
+		public int colsRight()
+		{
+			if (patterns.Count == 0)
+				return 0;
+			
+			// Find extreme left and right patterns
+			int rightBound  = int.MinValue;
+			foreach (CellPattern pat in patterns) {
+				
+				int b = pat.origin.col + pat.colsRight;
+				if (b > rightBound)
+					rightBound = b;
+			}
+			
+			return rightBound;
+		}
+		
+		
+		public int numberOfColumns()
+		{
+			return 1 + colsRight() - colsLeft(); // Pattern has min width of 1
+		}
+		
+		
+		public int numberOfRows()
+		{
+			if (patterns.Count == 0)
+				return 0;
+			
+			// Last pattern should be deepest into the level
+			// Will need changing if parallel patterns are allowed
+			CellPattern lastPat = patterns[patterns.Count-1];
+			return lastPat.origin.row + lastPat.rows;
 		}
 	}
 }

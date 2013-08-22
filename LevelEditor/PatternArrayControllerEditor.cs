@@ -74,14 +74,7 @@ namespace LevelEditor
 			storeEditor_.OnGUI();
 			EditorGUILayout.EndVertical();
 			
-			//EditorGUILayout.BeginVertical();
-			Rect patViewBounds = GUILayoutUtility.GetRect(0.0f, 0.0f,
-												  GUILayout.ExpandHeight(true),
-												  GUILayout.ExpandWidth (true));
-			patViewBounds.x     += paneWidth;
-			patViewBounds.width -= paneWidth;
-			patView_.OnGUI(patViewBounds);
-			//EditorGUILayout.EndVertical();
+			patView_.OnGUI();
 			
 			EditorGUILayout.EndHorizontal();
 		}
@@ -323,7 +316,7 @@ namespace LevelEditor
 				string classStr = "LevelEditor."+pat.GetType().Name+"Inspector";
 				Type inspType = Type.GetType(classStr);
 				if (inspType == null) {
-					Debug.LogError("No inspector of class '"+classStr+"', deafaulting to CellPatternInspector.");
+					Debug.LogWarning("No inspector of class '"+classStr+"', defaulting to CellPatternInspector.");
 					inspType = typeof(CellPatternInspector);
 				}
 				patInspector_ = Activator.CreateInstance(inspType) as CellPatternInspector;
@@ -393,19 +386,32 @@ namespace LevelEditor
 		
 		public int numberOfRows(PatternArrayView view)
 		{
-			return 10;
+			if (controller_ == null)
+				return 0;
+			
+			PatternArrayController pac = controller_.targetObject as PatternArrayController;
+			return pac.numberOfRows();
 		}
 		
 		
 		public int numberOfColumns(PatternArrayView view)
 		{
-			return 10;
+			if (controller_ == null)
+				return 0;
+			
+			PatternArrayController pac = controller_.targetObject as PatternArrayController;
+			return pac.numberOfColumns();
 		}
 		
 		
-		public Color colourForCell(PatternArrayView view, int col, int row)
+		public CellType typeForCell(PatternArrayView view, int col, int row)
 		{
-			return Color.cyan;
+			if (controller_ == null)
+				return CellType.Undefined;
+			
+			PatternArrayController pac = controller_.targetObject as PatternArrayController;
+			col += pac.colsLeft();
+			return pac.typeAtCoor(new PatternCoordinate(col, row));
 		}
 		
 		
