@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 using Penguin;
@@ -26,18 +27,28 @@ namespace LevelEditor
 		private float cellHeight_ = 30.0f;
 		private float cellWidth_  = 30.0f * Mathf.Sin(Mathf.PI/3.0f);
 		
+		private Texture2D hexTex_;
+		
 		
 		public PatternArrayView(PatternArrayViewDataSource dataSource)
 		{
 			dataSource_ = dataSource;
+			
+			// Load cell texture
+			hexTex_ = new Texture2D(0,0);
+			FileStream fs = new FileStream("Assets/Editor/Hexagon.png", FileMode.Open, FileAccess.Read);
+			byte[] imageData = new byte[fs.Length];
+			fs.Read(imageData, 0, (int) fs.Length);
+			hexTex_.LoadImage(imageData);
+			
 		}
 		
 		
 		private static readonly float sbWidth = 15.0f;
-		private static readonly Texture2D whiteTex = EditorGUIUtility.whiteTexture;
 		public void OnGUI ()
 		{
 			Rect bounds = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+			//GUILayout.BeginArea(bounds);
 			
 			
 			int rows = dataSource_.numberOfRows   (this);
@@ -57,7 +68,7 @@ namespace LevelEditor
 			
 			// Scroll displacement
 			float xOffset = scrollX_ * cellWidth_;
-			while (xOffset > cellWidth_) xOffset -= cellWidth_;
+			while (xOffset > cellWidth_)  xOffset -= cellWidth_;
 			float yOffset = scrollY_ * cellHeight_;
 			while (yOffset > cellHeight_) yOffset -= cellHeight_;
 			
@@ -71,16 +82,17 @@ namespace LevelEditor
 			
 			
 			// Draw the cells
+			float texWidth = cellHeight_ / Mathf.Sin(Mathf.PI / 3.0f);
 			Color oldColor = GUI.color;
 			for (int i=0; i<colEnd-colStart; i++) {
 				for (int j=0; j<rowEnd-rowStart; j++) {
 					Rect cellRect = new Rect(drawRegion.x + ((i+1)*cellWidth_) - xOffset,
 											 drawRegion.yMax - ((j+2)*cellHeight_)+ yOffset + ((colStart+i)%2==0?evenOffset:oddOffset),
-											 cellWidth_,
+											 texWidth,
 											 cellHeight_);
 					CellType type = dataSource_.typeForCell(this, colStart+i, rowStart+j);
 					GUI.color = colourForType(type);
-					GUI.DrawTexture(cellRect, whiteTex);
+					GUI.DrawTexture(cellRect, hexTex_);
 				}
 			}
 			GUI.color = oldColor;
@@ -121,6 +133,7 @@ namespace LevelEditor
 			oldScrollMidX_ = scrollX_ + (scrollSizeX / 2.0f);
 			oldScrollMidY_ = scrollY_ + (scrollSizeY / 2.0f);
 			
+			//GUILayout.EndArea();
 		}
 		
 		
