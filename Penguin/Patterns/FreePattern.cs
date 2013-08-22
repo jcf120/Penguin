@@ -27,15 +27,18 @@ namespace Penguin
 		
 		public override CellType typeAtCoordinate (PatternCoordinate coor)
 		{
+			if (store == null) {
+				return CellType.Undefined;
+			}
+			
 			// Convert to store's frame and check bounds
-			coor.col -= colsLeft;
+			coor.col += colsLeft;
 			if (   coor.col >= 0 && coor.col < store.width
 				&& coor.row >= 0 && coor.row < store.height) {
 				return store[coor.col,coor.row];
 			}
 			else {
-				Debug.LogError("FreePattern queried beyond bounds. Defaulting to CellType.Empty");
-				return CellType.Empty;
+				return CellType.Undefined;
 			}
 			
 		}
