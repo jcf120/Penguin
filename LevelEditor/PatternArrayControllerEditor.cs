@@ -399,8 +399,6 @@ namespace LevelEditor
 		
 		public int numberOfColumns(PatternArrayView view)
 		{
-			if (controller_ == null)
-				return 0;
 			
 			PatternArrayController pac = controller_.targetObject as PatternArrayController;
 			return pac.numberOfColumns();
@@ -415,6 +413,16 @@ namespace LevelEditor
 			PatternArrayController pac = controller_.targetObject as PatternArrayController;
 			col += pac.colsLeft();
 			return pac.typeAtCoor(new PatternCoordinate(col, row));
+		}
+		
+		
+		public bool firstColumnIsEven(PatternArrayView view)
+		{
+			if (controller_ == null)
+				return true; // Value won't be used, but needs to return something
+			
+			PatternArrayController pac = controller_.targetObject as PatternArrayController;
+			return pac.colsLeft() % 2 == 0;
 		}
 		
 		

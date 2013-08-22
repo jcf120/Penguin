@@ -10,6 +10,7 @@ namespace LevelEditor
 		int      numberOfRows(PatternArrayView view);
 		int      numberOfColumns(PatternArrayView view);
 		CellType typeForCell(PatternArrayView view, int col, int row);
+		bool     firstColumnIsEven(PatternArrayView view);
 	}
 	
 	
@@ -60,12 +61,21 @@ namespace LevelEditor
 			float yOffset = scrollY_ * cellHeight_;
 			while (yOffset > cellHeight_) yOffset -= cellHeight_;
 			
+			// Calc cell vertical offsets
+			float oddOffset  = 0.0f;
+			float evenOffset = 0.0f;
+			if (dataSource_.firstColumnIsEven(this))
+				oddOffset  = cellHeight_ / 2.0f;
+			else
+				evenOffset = cellHeight_ / 2.0f;
+			
+			
 			// Draw the cells
 			Color oldColor = GUI.color;
 			for (int i=0; i<colEnd-colStart; i++) {
 				for (int j=0; j<rowEnd-rowStart; j++) {
 					Rect cellRect = new Rect(drawRegion.x + ((i+1)*cellWidth_) - xOffset,
-											 drawRegion.yMax - ((j+1)*cellHeight_)+ yOffset + ((colStart+i)%2!=0?cellHeight_/2.0f:0.0f),
+											 drawRegion.yMax - ((j+2)*cellHeight_)+ yOffset + ((colStart+i)%2==0?evenOffset:oddOffset),
 											 cellWidth_,
 											 cellHeight_);
 					CellType type = dataSource_.typeForCell(this, colStart+i, rowStart+j);
@@ -86,10 +96,14 @@ namespace LevelEditor
 			scrollY_ = oldScrollMidY_ - (scrollSizeY / 2.0f);
 			
 			// Prevent scrollbars from being larger than bounds
-			if (scrollSizeX > scrollMaxX)
+			if (scrollSizeX > scrollMaxX) {
 				scrollSizeX = scrollMaxX = 1.0f;
-			if (scrollSizeY > scrollMaxY)
+				scrollX_ = 0.0f;
+			}
+			if (scrollSizeY > scrollMaxY) {
 				scrollSizeY = scrollMaxY = 1.0f;
+				scrollY_ = 1.0f;
+			}
 			
 			// Draw the scrollbars
 			Rect scrollXRect = new Rect (bounds.x, bounds.yMax-sbWidth, bounds.width, sbWidth);

@@ -339,6 +339,12 @@ namespace LevelEditor
 		}
 		
 		
+		public bool firstColumnIsEven(PatternArrayView view)
+		{
+			return true;
+		}
+		
+		
 		#endregion Data Source Methods
 	}
 
