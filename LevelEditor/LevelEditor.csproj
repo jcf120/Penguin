@@ -49,6 +49,8 @@
     <Compile Include="FreePatternStoreEditor.cs" />
     <Compile Include="FreePatternInspector.cs" />
     <Compile Include="PatternArrayView.cs" />
+    <Compile Include="HorizontalBreaksPatternInspector.cs" />
+    <Compile Include="HolesPatternInspector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
