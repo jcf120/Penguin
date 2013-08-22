@@ -48,7 +48,6 @@ namespace LevelEditor
 		public void OnGUI ()
 		{
 			Rect bounds = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-			//GUILayout.BeginArea(bounds);
 			
 			
 			int rows = dataSource_.numberOfRows   (this);
@@ -103,37 +102,47 @@ namespace LevelEditor
 			float scrollSizeX = (bounds.width  - sbWidth) / cellWidth_;
 			float scrollSizeY = (bounds.height - sbWidth) / cellHeight_;
 			
-			// Recentre bars on zoom
-			scrollX_ = oldScrollMidX_ - (scrollSizeX / 2.0f);
-			scrollY_ = oldScrollMidY_ - (scrollSizeY / 2.0f);
+			// Prevent scrolling beyond bounds
+			if (scrollX_ + scrollSizeX > scrollMaxX)
+				scrollX_ = scrollMaxX - scrollSizeX;
+			if (scrollY_ + scrollSizeY > scrollMaxY)
+				scrollY_ = scrollMaxY - scrollSizeY;
+				
+			// Prevent negative scroll
+			if (scrollX_ < 0.0f) scrollX_ = 0.0f;
+			if (scrollY_ < 0.0f) scrollY_ = 0.0f;
 			
 			// Prevent scrollbars from being larger than bounds
 			if (scrollSizeX > scrollMaxX) {
-				scrollSizeX = scrollMaxX = 1.0f;
+				scrollSizeX = scrollMaxX;
 				scrollX_ = 0.0f;
 			}
 			if (scrollSizeY > scrollMaxY) {
-				scrollSizeY = scrollMaxY = 1.0f;
+				scrollSizeY = scrollMaxY;
 				scrollY_ = 1.0f;
 			}
 			
-			// Draw the scrollbars
-			Rect scrollXRect = new Rect (bounds.x, bounds.yMax-sbWidth, bounds.width, sbWidth);
-			scrollX_ = GUI.HorizontalScrollbar(scrollXRect, scrollX_, scrollSizeX, 0.0f, scrollMaxX);
-			Rect scrollYRect = new Rect (bounds.xMax-sbWidth, bounds.y, sbWidth, bounds.height-sbWidth);
-			scrollY_ = GUI.VerticalScrollbar  (scrollYRect, scrollY_, scrollSizeY, scrollMaxY, 0.0f);
-			
+			// Draw the scrollbars as long as there are cells
+			if (rows > 0 && cols > 0) {
+				Rect scrollXRect = new Rect (bounds.x, bounds.yMax-sbWidth, bounds.width, sbWidth);
+				scrollX_ = GUI.HorizontalScrollbar(scrollXRect, scrollX_, scrollSizeX, 0.0f, scrollMaxX);
+				Rect scrollYRect = new Rect (bounds.xMax-sbWidth, bounds.y, sbWidth, bounds.height-sbWidth);
+				scrollY_ = GUI.VerticalScrollbar  (scrollYRect, scrollY_, scrollSizeY, scrollMaxY, 0.0f);
+			}
 			
 			
 			// Zoom detail GUI
+			float oldCellHeight = cellHeight_;
+			float oldCellWidth  = cellWidth_;
 			Rect sliderRect = new Rect(bounds.x, bounds.y, sbWidth, 50.0f);
 			cellHeight_ = GUI.VerticalSlider(sliderRect, cellHeight_, 40.0f, 5.0f);
-			cellWidth_  = cellHeight_ * Mathf.Sin(Mathf.PI/3.0f);
-			// Values for keeping scrollbar centred on zoom
-			oldScrollMidX_ = scrollX_ + (scrollSizeX / 2.0f);
-			oldScrollMidY_ = scrollY_ + (scrollSizeY / 2.0f);
-			
-			//GUILayout.EndArea();
+			// Zoom changed
+			if (oldCellHeight != cellHeight_) {
+				cellWidth_  = cellHeight_ * Mathf.Sin(Mathf.PI/3.0f);
+				// Adjust scroll
+				scrollX_ += ((drawRegion.width  / oldCellWidth ) - (drawRegion.width  / cellWidth_ )) / 2.0f;
+				scrollY_ += ((drawRegion.height / oldCellHeight) - (drawRegion.height / cellHeight_)) / 2.0f;
+			}
 		}
 		
 		
