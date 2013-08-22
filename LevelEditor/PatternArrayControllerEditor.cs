@@ -59,6 +59,7 @@ namespace LevelEditor
 			if (controller_==null)
 				return;
 			
+			EditorGUILayout.BeginVertical();
 			EditorGUILayout.BeginHorizontal();
 			
 			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(paneWidth));
@@ -70,13 +71,15 @@ namespace LevelEditor
 			newPatternGUI();
 			patternInspectorGUI();
 			controller_.ApplyModifiedProperties();
-			
-			storeEditor_.OnGUI();
 			EditorGUILayout.EndVertical();
 			
 			patView_.OnGUI();
 			
 			EditorGUILayout.EndHorizontal();
+			
+			storeEditor_.OnGUI();
+			
+			EditorGUILayout.EndVertical();
 		}
 		
 		

@@ -9,8 +9,9 @@ using Penguin;
 namespace LevelEditor
 {
 	
-	public class FreePatternStoreEditor
+	public class FreePatternStoreEditor : PatternArrayViewDataSource
 	{
+		private PatternArrayView patternView_;
 		
 		// Store selection and linking
 		private Dictionary<string, FreePatternStore> storesDict_;
@@ -40,17 +41,28 @@ namespace LevelEditor
 		{
 			storesDict_ = new Dictionary<string, FreePatternStore>();
 			fileStates_ = new Dictionary<string, FileState>();
+			
+			patternView_ = new PatternArrayView(this);
 		}
+		
+		
+		#region GUI Code
 		
 		
 		public void OnGUI ()
 		{
+			EditorGUILayout.BeginHorizontal();
+			
+			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(200.0f));
 			loadStoresDragAndDropGUI();
 			newStoreGUI();
 			storeSelectionAndSavingGUI();
+			EditorGUILayout.EndVertical();
 			
-			if (serializedTarget_ == null)
-				return;
+			patternView_.OnGUI();
+			
+			EditorGUILayout.EndHorizontal();
+			
 		}
 		
 		
@@ -142,6 +154,12 @@ namespace LevelEditor
 		}
 		
 		
+		#endregion GUI Code
+		
+		
+		#region Array Handling
+		
+		
 		private void setTarget(FreePatternStore store)
 		{
 			serializedTarget_ = new SerializedObject(store);
@@ -149,47 +167,6 @@ namespace LevelEditor
 			width_  = serializedTarget_.FindProperty("width" );
 			height_ = serializedTarget_.FindProperty("height");
 			values_ = serializedTarget_.FindProperty("values");
-		}
-		
-		
-		public string nameForStore(FreePatternStore fps)
-		{
-			return storesDict_.FirstOrDefault(s => s.Value == fps).Key;
-		}
-		
-		
-		public FreePatternStore loadStore(string name)
-		{
-			// Check it hasn't been loaded already
-			if (storesDict_.ContainsKey(name)) {
-				Debug.LogError("Attempted to load FreePatternStore '"+name+"' when it already exists");
-				return storesDict_[name];
-			}
-			
-			string path = storeDirectory_ + name + ".txt";
-			
-			if (!File.Exists(path)) {
-				Debug.LogError("FreePatternStore with path '"+path+"' doesn't exist");
-				return null;
-			}
-			
-			TextAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
-			return loadStore(asset);
-		}
-		
-		
-		public FreePatternStore loadStore(TextAsset asset)
-		{
-			string json = asset.text;
-			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
-			Dictionary<string, object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
-			fps.unpackDict(data);
-			
-			string name = asset.name;
-			storesDict_[name] = fps;
-			fileStates_[name] = FileState.saved;
-			
-			return fps;
 		}
 		
 		
@@ -242,6 +219,53 @@ namespace LevelEditor
 		}
 		
 		
+		public string nameForStore(FreePatternStore fps)
+		{
+			return storesDict_.FirstOrDefault(s => s.Value == fps).Key;
+		}
+		
+		
+		#endregion Array Handling
+		
+		
+		#region Loading and Saving
+		
+		
+		public FreePatternStore loadStore(string name)
+		{
+			// Check it hasn't been loaded already
+			if (storesDict_.ContainsKey(name)) {
+				Debug.LogError("Attempted to load FreePatternStore '"+name+"' when it already exists");
+				return storesDict_[name];
+			}
+			
+			string path = storeDirectory_ + name + ".txt";
+			
+			if (!File.Exists(path)) {
+				Debug.LogError("FreePatternStore with path '"+path+"' doesn't exist");
+				return null;
+			}
+			
+			TextAsset asset = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
+			return loadStore(asset);
+		}
+		
+		
+		public FreePatternStore loadStore(TextAsset asset)
+		{
+			string json = asset.text;
+			FreePatternStore fps = ScriptableObject.CreateInstance<FreePatternStore>();
+			Dictionary<string, object> data = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
+			fps.unpackDict(data);
+			
+			string name = asset.name;
+			storesDict_[name] = fps;
+			fileStates_[name] = FileState.saved;
+			
+			return fps;
+		}
+		
+		
 		private void saveStore(string storeName)
 		{
 			// Check store exist in editor
@@ -271,6 +295,53 @@ namespace LevelEditor
 			AssetDatabase.Refresh();
 			fileStates_[storeName] = FileState.saved;
 		}
+		
+		
+		#endregion Loading and Saving
+		
+		
+		#region Data Source Methods
+		
+		
+		public int numberOfColumns(PatternArrayView view)
+		{
+			if (serializedTarget_ == null)
+				return 0;
+			
+			FreePatternStore store = serializedTarget_.targetObject as FreePatternStore;
+			return store.width;
+		}
+		
+		
+		public int numberOfRows(PatternArrayView view)
+		{
+			if (serializedTarget_ == null)
+				return 0;
+			
+			FreePatternStore store = serializedTarget_.targetObject as FreePatternStore;
+			return store.height;
+		}
+		
+		
+		public CellType typeForCell(PatternArrayView view, int col, int row)
+		{
+			if (serializedTarget_ == null)
+				return CellType.Undefined;
+			
+			FreePatternStore store = serializedTarget_.targetObject as FreePatternStore;
+			
+			// Check bounds
+			if (   col >= 0 && col < store.width
+				&& row >= 0 && row < store.height)
+				return store.values[col, row];
+			else
+				return CellType.Undefined;
+			
+			return store.values[col,row];
+		}
+		
+		
+		#endregion Data Source Methods
 	}
 
 }
