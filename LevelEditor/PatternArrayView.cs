@@ -48,6 +48,11 @@ namespace LevelEditor
 			int colEnd   = (int)Math.Floor(scrollX_ + (drawRegion.width / cellWidth_));
 			int rowStart = (int)Math.Floor(scrollY_);
 			int rowEnd   = (int)Math.Floor(scrollY_ + (drawRegion.height / cellHeight_));
+			// Don't reference beyond data source's bounds
+			if (colEnd > cols)
+				colEnd = cols;
+			if (rowEnd > rows)
+				rowEnd = rows;
 			
 			// Scroll displacement
 			float xOffset = scrollX_ * cellWidth_;
