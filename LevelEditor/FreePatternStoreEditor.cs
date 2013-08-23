@@ -38,12 +38,29 @@ namespace LevelEditor
 		private static string storeDirectory_ = "Assets/Levels/FreePatternStores/";
 		
 		
+		// Cell paint brushes
+		string[]   cellTypeNames_;
+		CellType[] cellTypes_;
+		int        leftClickCellTypeIndex_;
+		int        rightClickCellTypeIndex_;
+		
+		
 		public FreePatternStoreEditor()
 		{
 			storesDict_ = new Dictionary<string, FreePatternStore>();
 			fileStates_ = new Dictionary<string, FileState>();
 			
 			patternView_ = new PatternArrayView(this);
+			
+			// Setup cellpainting palette
+			// Collect possible values excluding undefined
+			cellTypes_     = (from CellType ct in Enum.GetValues(typeof(CellType))
+							  where (ct != CellType.Undefined)
+							  select ct).ToArray();
+			cellTypeNames_ = (from CellType ct in cellTypes_
+							  select Enum.GetName(typeof(CellType), ct)).ToArray();
+			leftClickCellTypeIndex_  = (int)Array.IndexOf<CellType>(cellTypes_, CellType.Normal);
+			rightClickCellTypeIndex_ = (int)Array.IndexOf<CellType>(cellTypes_, CellType.Empty);
 		}
 		
 		
@@ -59,9 +76,12 @@ namespace LevelEditor
 			newStoreGUI();
 			storeSelectionAndSavingGUI();
 			
-			if (serializedTarget_ != null) {
-				storeBoundsGUI();
-			}
+			bool oldEnabled = GUI.enabled;
+			GUI.enabled = oldEnabled && serializedTarget_ != null;
+			storeBoundsGUI();
+			GUI.enabled = oldEnabled;
+			
+			cellTypePaletteGUI();
 			
 			EditorGUILayout.EndVertical();
 			
@@ -193,6 +213,16 @@ namespace LevelEditor
 			if (GUILayout.Button("-"))
 				removeRowTop();
 			GUI.enabled = oldEnabled;
+			EditorGUILayout.EndHorizontal();
+		}
+		
+		
+		private void cellTypePaletteGUI()
+		{
+			EditorGUILayout.LabelField("Paint Brush:");
+			EditorGUILayout.BeginHorizontal();
+			leftClickCellTypeIndex_  = EditorGUILayout.Popup(leftClickCellTypeIndex_,  cellTypeNames_);
+			rightClickCellTypeIndex_ = EditorGUILayout.Popup(rightClickCellTypeIndex_, cellTypeNames_);
 			EditorGUILayout.EndHorizontal();
 		}
 		
