@@ -27,6 +27,7 @@ namespace LevelEditor
 		private SerializedProperty width_;
 		private SerializedProperty height_;
 		private SerializedProperty values_;
+		private SerializedProperty valuesCount_;
 		
 		
 		// New store GUI
@@ -53,10 +54,15 @@ namespace LevelEditor
 		{
 			EditorGUILayout.BeginHorizontal();
 			
-			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(200.0f));
+			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(250.0f));
 			loadStoresDragAndDropGUI();
 			newStoreGUI();
 			storeSelectionAndSavingGUI();
+			
+			if (serializedTarget_ != null) {
+				storeBoundsGUI();
+			}
+			
 			EditorGUILayout.EndVertical();
 			
 			patternView_.OnGUI();
@@ -154,6 +160,43 @@ namespace LevelEditor
 		}
 		
 		
+		private void storeBoundsGUI()
+		{
+			bool oldEnabled = GUI.enabled;
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Columns:", GUILayout.Width(55.0f));
+			
+			EditorGUILayout.LabelField("Left", GUILayout.Width(35.0f));
+			if (GUILayout.Button("+"))
+				addColumnLeft();
+			GUI.enabled = oldEnabled && width_.intValue > 1;
+			if (GUILayout.Button("-"))
+				removeColumnLeft();
+			GUI.enabled= oldEnabled;
+			
+			EditorGUILayout.LabelField("Right", GUILayout.Width(35.0f));
+			if (GUILayout.Button("+"))
+				addColumnRight();
+			GUI.enabled = oldEnabled && width_.intValue > 1;
+			if (GUILayout.Button("-"))
+				removeColumnRight();
+			GUI.enabled = oldEnabled;
+			
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.LabelField("Rows", GUILayout.Width(35.0f));
+			if (GUILayout.Button("+"))
+				addRowTop();
+			GUI.enabled = oldEnabled && height_.intValue > 1;
+			if (GUILayout.Button("-"))
+				removeRowTop();
+			GUI.enabled = oldEnabled;
+			EditorGUILayout.EndHorizontal();
+		}
+		
+		
 		#endregion GUI Code
 		
 		
@@ -164,9 +207,10 @@ namespace LevelEditor
 		{
 			serializedTarget_ = new SerializedObject(store);
 			
-			width_  = serializedTarget_.FindProperty("width" );
-			height_ = serializedTarget_.FindProperty("height");
-			values_ = serializedTarget_.FindProperty("values");
+			width_       = serializedTarget_.FindProperty("width" );
+			height_      = serializedTarget_.FindProperty("height");
+			values_      = serializedTarget_.FindProperty("values");
+			valuesCount_ = serializedTarget_.FindProperty("values.Array.size");
 		}
 		
 		
@@ -298,6 +342,167 @@ namespace LevelEditor
 		
 		
 		#endregion Loading and Saving
+		
+		
+		#region Store Manipulation
+		
+		
+		private void addColumnRight()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to add new column to FreePatternStore without selection.");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			// Values are flat packed so cells representing
+			// the end of the row need to be inserted.
+			for (int i=height_.intValue; i>0; i--) {
+				values_.InsertArrayElementAtIndex(i * width_.intValue);
+				values_.GetArrayElementAtIndex(i * width_.intValue).enumValueIndex = (int)CellType.Normal;
+			}
+			width_.intValue++;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void addColumnLeft()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to add new column to FreePatternStore without selection.");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			// Values are flat packed so cells representing
+			// the start of the row need to be inserted.
+			for (int i=height_.intValue; i>0; i--) {
+				values_.InsertArrayElementAtIndex(i*width_.intValue);
+				values_.GetArrayElementAtIndex(i * width_.intValue).enumValueIndex = (int)CellType.Normal;
+			}
+			width_.intValue++;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void addRowTop()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to add new row to FreePatternStore without selection.");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			// Append new row to end of array
+			for (int i=0; i<width_.intValue; i++) {
+				values_.InsertArrayElementAtIndex(width_.intValue*height_.intValue+i);
+				values_.GetArrayElementAtIndex(width_.intValue*height_.intValue+i).enumValueIndex = (int)CellType.Normal;
+			}
+			height_.intValue++;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void addRowBottom()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to add new row to FreePatternStore without selection.");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			// Insert new row to start of array
+			for (int i=0; i<width_.intValue; i++) {
+				values_.InsertArrayElementAtIndex(i);
+				values_.GetArrayElementAtIndex(i).enumValueIndex = (int)CellType.Normal;
+			}
+			height_.intValue++;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void removeColumnRight()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to remove row from FreePatternStore without selection.");
+				return;
+			}
+			
+			if (width_.intValue < 2) {
+				Debug.LogError("FreePatternStore cannot have fewer than 1 column");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			for (int i=0; i<height_.intValue; i++) {
+				for(int j = (width_.intValue - 1) * (i + 1); j<valuesCount_.intValue; j++) {
+					values_.MoveArrayElement(j, j-1);
+				}
+				valuesCount_.intValue--; // this also shrinks the array
+			}
+			width_.intValue--;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void removeColumnLeft()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to remove row from FreePatternStore without selection.");
+				return;
+			}
+			
+			if (width_.intValue < 2) {
+				Debug.LogError("FreePatternStore cannot have fewer than 1 column");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			for (int i=0; i<height_.intValue; i++) {
+				for(int j = (width_.intValue - 1) * i; j<valuesCount_.intValue; j++) {
+					values_.MoveArrayElement(j+1, j);
+				}
+				valuesCount_.intValue--; // this also shrinks the array
+			}
+			width_.intValue--;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		private void removeRowTop()
+		{
+			if (serializedTarget_ == null) {
+				Debug.LogError("Tried to remove row from FreePatternStore without selection.");
+				return;
+			}
+			
+			if (height_.intValue < 2) {
+				Debug.LogError("FreePatternStore cannot have fewer than 1 row");
+				return;
+			}
+			
+			serializedTarget_.Update();
+			
+			valuesCount_.intValue -= width_.intValue;
+			height_.intValue--;
+			
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
+		#endregion Store Manipulation
 		
 		
 		#region Data Source Methods
