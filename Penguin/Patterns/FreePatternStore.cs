@@ -17,6 +17,22 @@ namespace Penguin
 		}
 		
 		
+		// Post serialisation intitialisation
+		public void OnEnable ()
+		{
+			if (width == 0 && height == 0) {
+				if (values != null) {
+					Debug.LogError("Inconsistent value bounds after deserialising FreePatternStore.");
+					return;
+				}
+				values    = new CellType[1];
+				values[0] = CellType.Normal;
+				width     = 1;
+				height    = 1;
+			}
+		}
+		
+		
 		public Dictionary<string, object> packDict()
 		{
 			List<int> packedValues = new List<int>();
