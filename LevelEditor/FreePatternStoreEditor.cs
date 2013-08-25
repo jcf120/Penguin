@@ -9,7 +9,7 @@ using Penguin;
 namespace LevelEditor
 {
 	
-	public class FreePatternStoreEditor : PatternArrayViewDataSource
+	public class FreePatternStoreEditor : PatternArrayViewDataSource, PatternArrayViewResponder
 	{
 		private PatternArrayView patternView_;
 		
@@ -51,6 +51,8 @@ namespace LevelEditor
 			fileStates_ = new Dictionary<string, FileState>();
 			
 			patternView_ = new PatternArrayView(this);
+			// Register for click input
+			patternView_.responder = this;
 			
 			// Setup cellpainting palette
 			// Collect possible values excluding undefined
@@ -532,10 +534,18 @@ namespace LevelEditor
 		}
 		
 		
+		private void setType(CellType type, int col, int row)
+		{
+			serializedTarget_.Update();
+			values_.GetArrayElementAtIndex(row*width_.intValue+col).enumValueIndex = (int)type;
+			serializedTarget_.ApplyModifiedProperties();
+		}
+		
+		
 		#endregion Store Manipulation
 		
 		
-		#region Data Source Methods
+		#region Pattern View Methods
 		
 		
 		public int numberOfColumns(PatternArrayView view)
@@ -580,7 +590,18 @@ namespace LevelEditor
 		}
 		
 		
-		#endregion Data Source Methods
+		public void cellLeftClicked(PatternArrayView view, int col, int row)
+		{
+			setType(cellTypes_[leftClickCellTypeIndex_], col, row);
+		}
+		
+		public void cellRightClicked(PatternArrayView view, int col, int row)
+		{
+			setType(cellTypes_[rightClickCellTypeIndex_], col, row);
+		}
+		
+		
+		#endregion Pattern View Methods
 	}
 
 }

@@ -17,21 +17,25 @@ namespace LevelEditor
 	
 	public interface PatternArrayViewResponder
 	{
-		void cellClicked(PatternArrayView view, int col, int row);
+		void cellLeftClicked (PatternArrayView view, int col, int row);
+		void cellRightClicked(PatternArrayView view, int col, int row);
 	}
 	
 	
 	public class PatternArrayView
 	{
 		private PatternArrayViewDataSource dataSource_;
+		private PatternArrayViewResponder  responder_;
+		public  PatternArrayViewResponder  responder {set{responder_=value;}}
 		
 		// GUI members
-		private float scrollX_;
-		private float scrollY_;
-		private float oldScrollMidX_;
-		private float oldScrollMidY_;
+		private float scrollCentreX_;
+		private float scrollCentreY_;
 		private float cellHeight_ = 30.0f;
 		private float cellWidth_  = 30.0f * Mathf.Sin(Mathf.PI/3.0f);
+		
+		// Scrollbar thickness
+		private static readonly float sbWidth = 15.0f;
 		
 		private Texture2D hexTex_;
 		
@@ -48,36 +52,74 @@ namespace LevelEditor
 			hexTex_.LoadImage(imageData);
 			
 		}
-		
-		
-		private static readonly float sbWidth = 15.0f;
 		public void OnGUI ()
 		{
-			Rect bounds = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+			Rect bounds = GUILayoutUtility.GetRect(0.0f,
+												   0.0f,
+												   GUILayout.ExpandWidth(true),
+												   GUILayout.ExpandHeight(true));
+			// Push coordinates and clipping space
+			GUI.BeginGroup(bounds);
+			bounds.x = bounds.y = 0.0f;
 			
-			
+			// Size of data source
 			int rows = dataSource_.numberOfRows   (this);
 			int cols = dataSource_.numberOfColumns(this);
 			
-			// Which cells are viewable?
-			Rect drawRegion = new Rect(bounds.x, bounds.y, bounds.width-sbWidth, bounds.height-sbWidth);
-			int colStart = (int)Math.Floor(scrollX_);
-			int colEnd   = (int)Math.Floor(scrollX_ + (drawRegion.width / cellWidth_));
-			int rowStart = (int)Math.Floor(scrollY_);
-			int rowEnd   = (int)Math.Floor(scrollY_ + (drawRegion.height / cellHeight_));
-			// Don't reference beyond data source's bounds
-			if (colEnd > cols)
-				colEnd = cols;
-			if (rowEnd > rows)
-				rowEnd = rows;
+			// Draw the cells and handle mouse event
+			Rect cellRegion    = bounds;
+			cellRegion.width  -= sbWidth;
+			cellRegion.height -= sbWidth;
+			drawCellsAndDetectMouse(cellRegion, cols, rows);
 			
-			// Scroll displacement
-			float xOffset = scrollX_ * cellWidth_;
-			while (xOffset > cellWidth_)  xOffset -= cellWidth_;
-			float yOffset = scrollY_ * cellHeight_;
-			while (yOffset > cellHeight_) yOffset -= cellHeight_;
+			// Zoom
+			drawZoomSlider(new Rect(bounds.x + 10.0f,
+									bounds.y + 10.0f,
+									15.0f,
+									50.0f));
 			
-			// Calc cell vertical offsets
+			// Scrollbars
+			if (cols > 0 && rows > 0)
+				drawScrollbars(bounds, cols, rows);
+			
+			// Pop coordinates and clipping space
+			GUI.EndGroup();
+		}
+		
+		
+		private float positiveDecimal(float x)
+		{
+			while (x < 0.0f) x += 1.0f;
+			return x % 1.0f;
+		}
+		
+		
+		private void drawCellsAndDetectMouse(Rect region, int colMax, int rowMax)
+		{
+			// Mouse input
+			Event evt = Event.current;
+			bool checkMouse = responder_ != null;
+			// Only interested in mouse down
+			if (evt.type != EventType.MouseDown && evt.type != EventType.MouseDrag)
+				checkMouse = false;
+			// Check input falls inside region
+			Vector2 mousePos = evt.mousePosition;
+			if (!region.Contains(mousePos))
+				checkMouse = false;
+			
+			// Viewable range
+			float halfViewableWidth  = (region.width  / cellWidth_ ) / 2.0f;
+			float halfViewableHeight = (region.height / cellHeight_) / 2.0f;
+			int colStart = (int)Math.Floor  (scrollCentreX_) - (int)Math.Ceiling(halfViewableWidth);
+			int rowStart = (int)Math.Floor  (scrollCentreY_) - (int)Math.Ceiling(halfViewableHeight);
+			int colEnd   = (int)Math.Ceiling(scrollCentreX_) + (int)Math.Ceiling(halfViewableWidth);
+			int rowEnd   = (int)Math.Ceiling(scrollCentreY_) + (int)Math.Ceiling(halfViewableHeight);
+			
+			// Scroll displacement is the scroll's positive decimal
+			float colOffset = positiveDecimal(scrollCentreX_) + positiveDecimal(halfViewableWidth);
+			float rowOffset = positiveDecimal(scrollCentreY_) + positiveDecimal(halfViewableHeight);
+			
+			// Calc cell vertical offsets for alternating rows
 			float oddOffset  = 0.0f;
 			float evenOffset = 0.0f;
 			if (dataSource_.firstColumnIsEven(this))
@@ -86,69 +128,137 @@ namespace LevelEditor
 				evenOffset = cellHeight_ / 2.0f;
 			
 			
-			// Draw the cells
 			float texWidth = cellHeight_ / Mathf.Sin(Mathf.PI / 3.0f);
+			
 			Color oldColor = GUI.color;
-			for (int i=0; i<colEnd-colStart; i++) {
-				for (int j=0; j<rowEnd-rowStart; j++) {
-					Rect cellRect = new Rect(drawRegion.x + ((i+1)*cellWidth_) - xOffset,
-											 drawRegion.yMax - ((j+2)*cellHeight_)+ yOffset + ((colStart+i)%2==0?evenOffset:oddOffset),
-											 texWidth,
-											 cellHeight_);
-					CellType type = dataSource_.typeForCell(this, colStart+i, rowStart+j);
-					GUI.color = colourForType(type);
-					GUI.DrawTexture(cellRect, hexTex_);
+			
+			for (int i=colStart; i<colEnd; i++) {
+				for (int j=rowStart; j<rowEnd; j++) {
+					
+					// Only draw if inside data range
+					if (   i>=0 && i<colMax
+						&& j>=0 && j<rowMax) {
+						
+						CellType type = dataSource_.typeForCell(this, i, j);
+						GUI.color = colourForType(type);
+						
+						float x = region.x    + ((i - 0.5f - colStart - colOffset) * cellWidth_);
+						float y = region.yMax - ((j + 1.0f - rowStart - rowOffset) * cellHeight_);
+						y += i % 2 == 0 ? evenOffset : oddOffset;
+						
+						Rect cellRect = new Rect(x, y, texWidth, cellHeight_);
+						GUI.DrawTexture(cellRect, hexTex_);
+						
+						// Check mouse input
+						if (checkMouse && cellRect.Contains(mousePos)) {
+							checkMouse = false;
+							if      (evt.button == 0)
+								responder_.cellLeftClicked (this, i, j);
+							else if (evt.button == 1)
+								responder_.cellRightClicked(this, i, j);
+							evt.Use();
+						}
+					}
 				}
 			}
+			
 			GUI.color = oldColor;
-			
+		}
+		
+		
+		private void drawScrollbars(Rect region, int colMax, int rowMax)
+		{
 			// Scrollbar max values dependent on data source
-			float scrollMaxX  = (float)cols;
-			float scrollMaxY  = (float)rows;
-			float scrollSizeX = (bounds.width  - sbWidth) / cellWidth_;
-			float scrollSizeY = (bounds.height - sbWidth) / cellHeight_;
+			// Allow scrolling slightly beyond data set
+			float dataCentreX     = (colMax / 2.0f);
+			float dataCentreY     = (rowMax / 2.0f);
+			float scrollHalfMaxX  = dataCentreX + 1.0f;
+			float scrollHalfMaxY  = dataCentreY + 1.0f;
+			float scrollSizeX     = (region.width  - sbWidth) / cellWidth_;
+			float scrollSizeY     = (region.height - sbWidth) / cellHeight_;
 			
-			// Prevent scrolling beyond bounds
-			if (scrollX_ + scrollSizeX > scrollMaxX)
-				scrollX_ = scrollMaxX - scrollSizeX;
-			if (scrollY_ + scrollSizeY > scrollMaxY)
-				scrollY_ = scrollMaxY - scrollSizeY;
-				
-			// Prevent negative scroll
-			if (scrollX_ < 0.0f) scrollX_ = 0.0f;
-			if (scrollY_ < 0.0f) scrollY_ = 0.0f;
-			
-			// Prevent scrollbars from being larger than bounds
-			if (scrollSizeX > scrollMaxX) {
-				scrollSizeX = scrollMaxX;
-				scrollX_ = 0.0f;
+			// ScrollMax must at least as big as ScrollSize
+			if (scrollHalfMaxX * 2.0f < scrollSizeX) {
+				scrollHalfMaxX = scrollSizeX / 2.0f;
+				scrollCentreX_ = dataCentreX;
 			}
-			if (scrollSizeY > scrollMaxY) {
-				scrollSizeY = scrollMaxY;
-				scrollY_ = 1.0f;
+			if (scrollHalfMaxY * 2.0f < scrollSizeY) {
+				scrollHalfMaxY = scrollSizeY / 2.0f;
+				scrollCentreY_ = dataCentreY;
 			}
 			
-			// Draw the scrollbars as long as there are cells
-			if (rows > 0 && cols > 0) {
-				Rect scrollXRect = new Rect (bounds.x, bounds.yMax-sbWidth, bounds.width, sbWidth);
-				scrollX_ = GUI.HorizontalScrollbar(scrollXRect, scrollX_, scrollSizeX, 0.0f, scrollMaxX);
-				Rect scrollYRect = new Rect (bounds.xMax-sbWidth, bounds.y, sbWidth, bounds.height-sbWidth);
-				scrollY_ = GUI.VerticalScrollbar  (scrollYRect, scrollY_, scrollSizeY, scrollMaxY, 0.0f);
-			}
+			// GUI uses left/ bottom of scrollbar
+			float scrollX = scrollCentreX_ - (scrollSizeX / 2.0f);
+			float scrollY = scrollCentreY_ - (scrollSizeY / 2.0f);
 			
+			Rect scrollXRect = new Rect (region.x,
+										 region.yMax - sbWidth,
+										 region.xMax,
+										 sbWidth);
+			Rect scrollYRect = new Rect (region.xMax - sbWidth,
+										 region.x,
+										 sbWidth,
+										 region.yMax - sbWidth);
 			
-			// Zoom detail GUI
+			scrollX = GUI.HorizontalScrollbar(scrollXRect,
+											  scrollX,
+											  scrollSizeX,
+											  dataCentreX - scrollHalfMaxX,
+											  dataCentreX + scrollHalfMaxX);
+			scrollY = GUI.VerticalScrollbar  (scrollYRect,
+											  scrollY,
+											  scrollSizeY,
+											  dataCentreY + scrollHalfMaxY,
+											  dataCentreY - scrollHalfMaxY);
+			
+			// Update class scroll memebers
+			scrollCentreX_ = scrollX + (scrollSizeX / 2.0f);
+			scrollCentreY_ = scrollY + (scrollSizeY / 2.0f);
+		}
+		
+		
+		private void drawZoomSlider(Rect region)
+		{
 			float oldCellHeight = cellHeight_;
-			float oldCellWidth  = cellWidth_;
-			Rect sliderRect = new Rect(bounds.x, bounds.y, sbWidth, 50.0f);
-			cellHeight_ = GUI.VerticalSlider(sliderRect, cellHeight_, 40.0f, 5.0f);
+			cellHeight_ = GUI.VerticalSlider(region, cellHeight_, 40.0f, 5.0f);
 			// Zoom changed
-			if (oldCellHeight != cellHeight_) {
+			if (oldCellHeight != cellHeight_)
 				cellWidth_  = cellHeight_ * Mathf.Sin(Mathf.PI/3.0f);
-				// Adjust scroll
-				scrollX_ += ((drawRegion.width  / oldCellWidth ) - (drawRegion.width  / cellWidth_ )) / 2.0f;
-				scrollY_ += ((drawRegion.height / oldCellHeight) - (drawRegion.height / cellHeight_)) / 2.0f;
-			}
+		}
+		
+		
+		private void detectMouseInput(Rect region)
+		{
+			Event evt = Event.current;
+			
+			// Only interested in mouse down event
+			if (evt.type != EventType.MouseDown)
+				return;
+			
+			Vector2 mousePos = evt.mousePosition;
+			
+			// Ignore event if outside draw region
+			if (!region.Contains(mousePos))
+				return;
+			
+			evt.Use();
+			
+			// Invert y and move to region's frame
+			mousePos.x -= region.x;
+			mousePos.y =  region.yMax - mousePos.y;
+			
+			// Scale and account for scroll offset
+			mousePos   /= cellHeight_;
+			mousePos.x += scrollCentreX_ - 0.5f - ((region.width  / cellWidth_ ) / 2.0f);
+			mousePos.y += scrollCentreY_ - 0.5f - ((region.height / cellHeight_) / 2.0f);
+			
+			// Consider alternating column displacment
+			if (!dataSource_.firstColumnIsEven(this))
+				mousePos.y += 0.5f;
+			
+			// Convert to hexagon coordinates
+			PatternCoordinate pc = new PatternCoordinate(CellVector.fromVector2(mousePos));
+			Debug.Log(pc);
 		}
 		
 		
