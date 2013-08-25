@@ -73,6 +73,8 @@ namespace LevelEditor
 		{
 			EditorGUILayout.BeginHorizontal();
 			
+			patternView_.OnGUI();
+			
 			EditorGUILayout.BeginVertical(GUILayout.MaxWidth(250.0f));
 			loadStoresDragAndDropGUI();
 			newStoreGUI();
@@ -86,8 +88,6 @@ namespace LevelEditor
 			cellTypePaletteGUI();
 			
 			EditorGUILayout.EndVertical();
-			
-			patternView_.OnGUI();
 			
 			EditorGUILayout.EndHorizontal();
 			
