@@ -6,8 +6,7 @@ namespace Penguin
 	{
 		Undefined = 0,
 		Empty,
-		Normal,
-		TripHazard
+		Normal
 	}
 }
 
