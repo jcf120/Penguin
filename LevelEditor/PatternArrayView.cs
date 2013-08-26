@@ -66,17 +66,20 @@ namespace LevelEditor
 			int rows = dataSource_.numberOfRows   (this);
 			int cols = dataSource_.numberOfColumns(this);
 			
+			// Zoom slider draw later, but rect need for ignoring input
+			Rect zoomRect = new Rect(bounds.x + 10.0f,
+									 bounds.y + 10.0f,
+									 15.0f,
+									 50.0f);
+			
 			// Draw the cells and handle mouse event
 			Rect cellRegion    = bounds;
 			cellRegion.width  -= sbWidth;
 			cellRegion.height -= sbWidth;
-			drawCellsAndDetectMouse(cellRegion, cols, rows);
+			drawCellsAndDetectMouse(cellRegion, zoomRect, cols, rows);
 			
-			// Zoom
-			drawZoomSlider(new Rect(bounds.x + 10.0f,
-									bounds.y + 10.0f,
-									15.0f,
-									50.0f));
+			// Draw zoom ontop of cells
+			drawZoomSlider(zoomRect);
 			
 			// Scrollbars
 			if (cols > 0 && rows > 0)
@@ -94,7 +97,7 @@ namespace LevelEditor
 		}
 		
 		
-		private void drawCellsAndDetectMouse(Rect region, int colMax, int rowMax)
+		private void drawCellsAndDetectMouse(Rect region, Rect ignoreRegion, int colMax, int rowMax)
 		{
 			// Mouse input
 			Event evt = Event.current;
@@ -105,6 +108,9 @@ namespace LevelEditor
 			// Check input falls inside region
 			Vector2 mousePos = evt.mousePosition;
 			if (!region.Contains(mousePos))
+				checkMouse = false;
+			// Ignore event if inside ignore region for sliderbar
+			if (ignoreRegion.Contains(mousePos))
 				checkMouse = false;
 			
 			// Viewable range
