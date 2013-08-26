@@ -44,13 +44,19 @@ namespace LevelEditor
 			
 			EditorGUILayout.EndHorizontal();
 			
-			// Update properties
+			// Update store reference
 			storeName_.stringValue = storeNames[selIndex];
 			if (storeName_.stringValue == "unassigned") {
 				store_.objectReferenceValue = null;
 			}
 			else {
-				store_.objectReferenceValue = storesDict[storeName_.stringValue];
+				FreePatternStore store = storesDict[storeName_.stringValue];
+				store_.objectReferenceValue = store;
+				
+				// Resize pattern to match store
+				colsLeft_.intValue  = 0;
+				colsRight_.intValue = store.width-1;
+				rows_.intValue      = store.height;
 			}
 			
 		}
