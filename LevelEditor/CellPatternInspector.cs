@@ -10,11 +10,11 @@ namespace LevelEditor
 	{
 		protected SerializedObject serializedTarget_;
 		
-		private SerializedProperty originCol_;
-		private SerializedProperty originRow_;
-		private SerializedProperty rows_;
-		private SerializedProperty colsLeft_;
-		private SerializedProperty colsRight_;
+		protected SerializedProperty originCol_;
+		protected SerializedProperty originRow_;
+		protected SerializedProperty rows_;
+		protected SerializedProperty colsLeft_;
+		protected SerializedProperty colsRight_;
 		
 		
 		public virtual void setTarget(CellPattern pattern)
