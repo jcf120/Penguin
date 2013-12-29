@@ -4,8 +4,8 @@
 // Date:	29th December 2013
 //
 // Description:
-// A generic container that stores each element with an arbitrary value
-// reflecting it's relative probablity of being popped.
+// A generic container that stores each element with an equal probability of
+// being popped.
 //------------------------------------------------------------------------------
 
 using System;
