@@ -60,6 +60,8 @@
     <Compile Include="Patterns\FreePatternStoreLinker.cs" />
     <Compile Include="Structures\TorusArray.cs" />
     <Compile Include="Structures\WeightedRandomisedStack.cs" />
+    <Compile Include="Display\PrefabPool.cs" />
+    <Compile Include="Structures\RandomisedStack.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
