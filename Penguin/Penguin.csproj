@@ -59,10 +59,12 @@
     <Compile Include="Patterns\FreePattern.cs" />
     <Compile Include="Patterns\FreePatternStoreLinker.cs" />
     <Compile Include="Structures\TorusArray.cs" />
+    <Compile Include="Structures\WeightedRandomisedStack.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Behaviours\" />
     <Folder Include="Structures\" />
+    <Folder Include="Display\" />
   </ItemGroup>
 </Project>
