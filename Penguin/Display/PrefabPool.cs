@@ -20,7 +20,7 @@ namespace Penguin
 	using SpawningDesc = WeightedRandomisedStack<GameObject>;
 
 
-	//----------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	public class PrefabPool
 	{
 
