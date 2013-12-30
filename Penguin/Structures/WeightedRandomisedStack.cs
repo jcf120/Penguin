@@ -78,6 +78,19 @@ namespace Penguin
 		}
 
 
+		public T[] ToArray ()
+		{
+			T[] itemArray = new T[Size()];
+
+			for (int i = 0; i < Size(); i++)
+			{
+				itemArray[i] = m_choices[i].item;
+			}
+
+			return itemArray;
+		}
+
+
 		Choice RandomChoice ()
 		{
 			Choice returnChoice = new Choice();
