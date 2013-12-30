@@ -12,39 +12,53 @@ using System;
 using System.Collections.Generic;
 namespace Penguin
 {
+	//--------------------------------------------------------------------------
 	public class WeightedRandomisedStack<T>
 	{
 
+
+		//----------------------------------------------------------------------
 		struct Choice
 		{
 			public T		item;
 			public double	weighting;
 		}
 
-
+		
+		//----------------------------------------------------------------------
+		// Private members
 		List<Choice> 	m_choices;
 		Random			m_random;
 
 
+		//======================================================================
+		// Public Methods
+		//======================================================================
+
+		
+		//----------------------------------------------------------------------
 		public WeightedRandomisedStack ()
 		{
 			m_choices	= new List<Choice>();
 			m_random	= new Random();
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public uint Size ()
 		{
 			return (uint)m_choices.Count;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public bool IsEmpty ()
 		{
 			return Size() == 0;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public void Push (T item, double weighting)
 		{
 			Choice choice;
@@ -53,7 +67,8 @@ namespace Penguin
 			m_choices.Add(choice);
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public T Peek ()
 		{
 			if ( IsEmpty() )
@@ -64,7 +79,8 @@ namespace Penguin
 			return RandomChoice().item;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public T Pop ()
 		{
 			if ( IsEmpty() )
@@ -77,7 +93,8 @@ namespace Penguin
 			return choice.item;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		public T[] ToArray ()
 		{
 			T[] itemArray = new T[Size()];
@@ -89,8 +106,14 @@ namespace Penguin
 
 			return itemArray;
 		}
+		
+		
+		//======================================================================
+		// Private Methods
+		//======================================================================
 
-
+		
+		//----------------------------------------------------------------------
 		Choice RandomChoice ()
 		{
 			Choice returnChoice = new Choice();
@@ -112,7 +135,8 @@ namespace Penguin
 			return returnChoice;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		// Sums the the weightings of all choices
 		double CalcProbabilitySpaceSize ()
 		{
@@ -125,6 +149,8 @@ namespace Penguin
 
 			return total;
 		}
-	}
-}
+
+
+	} // Class definition
+} // Namespace
 

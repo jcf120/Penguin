@@ -21,14 +21,26 @@
 using System;
 namespace Penguin
 {
+	//--------------------------------------------------------------------------
 	public class TorusArray<T>
 	{
+
+
+		//----------------------------------------------------------------------
+		// Private members
 		T[] 			m_values;
 		uint 			m_originX;
 		uint 			m_originY;
 		readonly uint 	m_sizeX;
 		readonly uint 	m_sizeY;
+		
+		
+		//======================================================================
+		// Public Methods
+		//======================================================================
 
+		
+		//----------------------------------------------------------------------
 		public TorusArray (uint x, uint y)
 		{
 			// Assert that x and y are non-zero and positive
@@ -55,7 +67,8 @@ namespace Penguin
 			m_originY = 0;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		// Set the array's orgin relative to it's current position
 		public void Translate (int x, int y)
 		{
@@ -67,14 +80,16 @@ namespace Penguin
 			m_originY = WrapIndex((int)m_originY, m_sizeY);
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		// Convenience methods
 		public void StepLeft()	{ Translate(-1, 0); }
 		public void StepRight()	{ Translate( 1, 0); }
 		public void StepUp()	{ Translate( 0, 1); }
 		public void StepDown()	{ Translate( 0,-1); }
 
-
+		
+		//----------------------------------------------------------------------
 		public T this[uint x, uint y]
 		{
 			get
@@ -112,7 +127,13 @@ namespace Penguin
 			}
 		}
 
+		
+		//======================================================================
+		// Private Methods
+		//======================================================================
 
+		
+		//----------------------------------------------------------------------
 		uint WrapIndex(int index, uint size)
 		{
 			while (index < 0) 		index += (int)size;
@@ -120,7 +141,8 @@ namespace Penguin
 			return (uint)index;
 		}
 
-
+		
+		//----------------------------------------------------------------------
 		// Convert from offset 2D index to 1D index
 		uint LinearIndex(uint x, uint y)
 		{
@@ -128,6 +150,8 @@ namespace Penguin
 			index +=		WrapIndex((int)(x + m_originX), m_sizeX);
 			return index;
 		}
-	}
-}
+
+
+	} // Class definition
+} // Namespace
 
