@@ -42,17 +42,17 @@ namespace Penguin
 		
 		
 		//----------------------------------------------------------------------
-		public Vector3 Interpolate (float t)
+		public Vector3 InterpolatePoint (float t)
 		{
 			uint 	i = 1;
 			float 	u = 0.0f;
 
 			FindSegmentStart(t, ref u, ref i);
-			return Interpolate(m_points[i - 1],
-			                   m_points[i    ],
-			                   m_points[i + 1],
-			                   m_points[i + 2],
-			                   u);
+			return InterpolatePoint(m_points[i - 1],
+			                   		m_points[i    ],
+			                   		m_points[i + 1],
+			                   		m_points[i + 2],
+			                   		u);
 		}
 		
 		
@@ -96,27 +96,40 @@ namespace Penguin
 					break;
 			}
 		}
-
-
+		
+		
 		//----------------------------------------------------------------------
-		Vector3 Interpolate(Vector3 p0,
-		                    Vector3 p1,
-		                    Vector3 p2,
-		                    Vector3 p3,
-		                    float u)
+		Vector3 InterpolatePoint(Vector3 a,
+		                         Vector3 b,
+		                         Vector3 c,
+		                         Vector3 d,
+		                         float u)
 		{
+			Vector3 p1 = (d - 3 * c) + (3 * b - a);
+			Vector3 p2 = 3 * (c - (2 * b) + a);
+			Vector3 p3 = 3 * (b - a);
+			
 			float u2 = u * u;
 			float u3 = u2 * u;
 			
-			Vector3 t1 = 0.5f * (p2 - p0);
-			Vector3 t2 = 0.5f * (p3 - p1);
-
-			float b0 = 2 * u3 - 3 * u2 + 1;
-			float b1 = -2 * u3 + 3 * u2;
-			float b2 = u3 - 2 * u2 + u;
-			float b3 = u3 - u2;
-
-			return b0 * p0 + b1 * p1 + b2 * t1 + b3 * t2;
+			return (p1 * u3) + (p2 * u2) + (p3 * u) + a;
+		}
+		
+		
+		//----------------------------------------------------------------------
+		Vector3 InterpolateTangent(Vector3 a,
+		                           Vector3 b,
+		                           Vector3 c,
+		                           Vector3 d,
+		                           float u)
+		{
+			Vector3 p1 = (d - 3 * c) + (3 * b - a);
+			Vector3 p2 = 3 * (c - (2 * b) + a);
+			Vector3 p3 = 3 * (b - a);
+			
+			float u2 = u * u;
+			
+			return (3 * p1 * u2) + (2 * p2 * u) + p3;
 		}
 		
 		
