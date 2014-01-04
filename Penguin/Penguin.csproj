@@ -62,11 +62,13 @@
     <Compile Include="Structures\WeightedRandomisedStack.cs" />
     <Compile Include="Display\PrefabPool.cs" />
     <Compile Include="Structures\RandomisedStack.cs" />
+    <Compile Include="3DMaths\Spline.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Behaviours\" />
     <Folder Include="Structures\" />
     <Folder Include="Display\" />
+    <Folder Include="3DMaths\" />
   </ItemGroup>
 </Project>
