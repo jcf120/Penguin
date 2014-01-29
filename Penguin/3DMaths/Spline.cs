@@ -46,13 +46,27 @@ namespace Penguin
 		{
 			uint 	i = 1;
 			float 	u = 0.0f;
-
+			
 			FindSegmentStart(t, ref u, ref i);
 			return InterpolatePoint(m_points[i - 1],
-			                   		m_points[i    ],
-			                   		m_points[i + 1],
-			                   		m_points[i + 2],
-			                   		u);
+			                        m_points[i    ],
+			                        m_points[i + 1],
+			                        m_points[i + 2],
+			                        u);
+		}
+		
+		
+		//----------------------------------------------------------------------
+		// Same again, but returning info about position in spline relative to
+		// the splines defining points
+		public Vector3 InterpolatePoint (float t, ref uint i, ref float u)
+		{
+			FindSegmentStart(t, ref u, ref i);
+			return InterpolatePoint(m_points[i - 1],
+			                        m_points[i    ],
+			                        m_points[i + 1],
+			                        m_points[i + 2],
+			                        u);
 		}
 		
 		
