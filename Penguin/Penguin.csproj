@@ -63,6 +63,9 @@
     <Compile Include="Display\PrefabPool.cs" />
     <Compile Include="Structures\RandomisedStack.cs" />
     <Compile Include="3DMaths\Spline.cs" />
+    <Compile Include="3DMaths\OrthoSplineArray.cs" />
+    <Compile Include="Behaviours\SplineController.cs" />
+    <Compile Include="Display\CellConveyor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
